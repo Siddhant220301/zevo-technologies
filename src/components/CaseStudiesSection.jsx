@@ -7,8 +7,8 @@ export default function CaseStudiesSection() {
           Practical results for <em>growing</em> businesses.
         </h2>
         <p className="section-subtext">
-          Real software and 3D experiences delivered for logistics hubs, modern D2C lifestyle
-          brands, and healthcare practices.
+          Real software and interactive digital experiences delivered for logistics hubs, modern D2C
+          lifestyle brands, and healthcare practices.
         </p>
       </div>
 
@@ -34,9 +34,9 @@ export default function CaseStudiesSection() {
 
         <article className="case-card case-02 tilt-card" data-cursor="CASE 02">
           <span className="case-num">CASE STUDY // 02</span>
-          <h3>Zenith Lifestyle — Interactive 3D Footwear Customizer</h3>
+          <h3>Zenith Lifestyle — Interactive 360° Footwear Customizer</h3>
           <p>
-            Engineered a fast, responsive Three.js 3D product visualizer allowing customers to
+            Engineered a fast, responsive interactive product visualizer allowing customers to
             inspect materials in 360° and customize colorways directly in the browser.
           </p>
           <div className="case-stat-grid">
@@ -46,7 +46,7 @@ export default function CaseStudiesSection() {
             </div>
             <div>
               <strong className="stat-count-str">60 FPS</strong>
-              <span>Smooth Mobile 3D</span>
+              <span>Smooth Mobile Experience</span>
             </div>
           </div>
         </article>

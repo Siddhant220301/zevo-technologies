@@ -31,24 +31,25 @@ export default function ContactSection() {
   return (
     <section className="section-wrap content-grid" id="contact">
       <div className="contact-info-col">
-        <span className="section-tag">// 08 — DIRECT FOUNDER INTAKE</span>
+        <span className="section-tag">// 08 — GET IN TOUCH</span>
         <h2 className="section-title">
           Let&apos;s discuss your <em>project</em>.
         </h2>
         <p className="section-subtext">
-          When you get in touch, you talk directly with the founders who will architect and build your
-          product. We share an initial scope breakdown and milestone estimate within 24 hours.
+          When you get in touch, you talk directly with the engineers and product designers who will
+          architect and build your product. We share an initial scope breakdown and milestone estimate
+          within 24 hours.
         </p>
         <div style={{ marginTop: "28px", fontFamily: "var(--font-mono)", fontSize: "0.8rem", lineHeight: "1.7" }}>
           <div>
-            <strong style={{ color: "var(--ink)" }}>FOUNDER STUDIO LOCATIONS:</strong>
+            <strong style={{ color: "var(--ink)" }}>STUDIO LOCATIONS:</strong>
           </div>
           <div style={{ color: "var(--ink-secondary)" }}>• BENGALURU // Karnataka</div>
           <div style={{ color: "var(--ink-secondary)" }}>• MUMBAI // Maharashtra</div>
           <div style={{ marginTop: "12px" }}>
             DIRECT EMAIL:{" "}
-            <a href="mailto:hello@zevotech.io" style={{ color: "var(--klein-blue)", fontWeight: 700 }}>
-              hello@zevotech.io
+            <a href="mailto:info@zevotechnologies.com" style={{ color: "var(--klein-blue)", fontWeight: 700 }}>
+              info@zevotechnologies.com
             </a>
           </div>
         </div>
@@ -99,7 +100,7 @@ export default function ContactSection() {
               rows={3}
               className="form-input"
               required
-              placeholder="Tell us what you'd like to build or replace (e.g. Custom Operations Tool, 3D Web Visualizer, WhatsApp Workflow)..."
+              placeholder="Tell us what you'd like to build or replace (e.g. Custom Operations Tool, Interactive Web Application, WhatsApp Workflow)..."
               value={formData.scope}
               onChange={(e) => setFormData({ ...formData, scope: e.target.value })}
             />

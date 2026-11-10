@@ -4,7 +4,7 @@ export default function EnterpriseMarquee() {
       <div className="marquee-track">
         <span>CUSTOM OPERATIONS TOOLS</span>
         <span className="bullet">///</span>
-        <span>INTERACTIVE 3D WEBGL EXPERIENCES</span>
+        <span>INTERACTIVE DIGITAL EXPERIENCES</span>
         <span className="bullet">///</span>
         <span>FAST NEXT.JS WEB APPLICATIONS</span>
         <span className="bullet">///</span>
@@ -18,7 +18,7 @@ export default function EnterpriseMarquee() {
         <span className="bullet">///</span>
         <span>CUSTOM OPERATIONS TOOLS</span>
         <span className="bullet">///</span>
-        <span>INTERACTIVE 3D WEBGL EXPERIENCES</span>
+        <span>INTERACTIVE DIGITAL EXPERIENCES</span>
         <span className="bullet">///</span>
         <span>FAST NEXT.JS WEB APPLICATIONS</span>
         <span className="bullet">///</span>

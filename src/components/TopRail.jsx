@@ -43,7 +43,7 @@ export default function TopRail({ onRollDice }) {
         </li>
         <li>
           <a href="#mission" data-cursor="MISSION" onClick={(e) => handleNavClick(e, "#mission")}>
-            Our Mission
+            Vision &amp; Mission
           </a>
         </li>
         <li>
@@ -91,10 +91,10 @@ export default function TopRail({ onRollDice }) {
           type="button"
           className="roll-dice-header-btn"
           id="rollDiceBtn"
-          data-cursor="ROLL 3D"
+          data-cursor="ROLL"
           onClick={handleRollClick}
         >
-          🎲 <span>ROLL 3D DIE</span>
+          🎲 <span>ROLL DIE</span>
         </button>
 
         <a

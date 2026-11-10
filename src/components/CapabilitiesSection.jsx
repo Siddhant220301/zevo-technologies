@@ -13,9 +13,9 @@ const capabilities = [
   },
   {
     face: 1,
-    code: "[02 // 3D WEB]",
-    title: "Interactive 3D Web & Product Showcases",
-    desc: "60fps Three.js 3D product visualizers that let customers interact, customize, and buy with confidence.",
+    code: "[02 // INTERACTIVE WEB]",
+    title: "Interactive Web & Product Showcases",
+    desc: "High-performance interactive product visualizers that let customers explore details, configure features, and buy with confidence.",
     cursor: "FACE 02",
   },
   {
@@ -27,9 +27,9 @@ const capabilities = [
   },
   {
     face: 3,
-    code: "[04 // 3D MOTION]",
-    title: "3D Motion Design & Visual Assets",
-    desc: "Crisp 3D product animations, explainer reels, and distinctive brand visuals.",
+    code: "[04 // MOTION DESIGN]",
+    title: "Motion Design & Visual Assets",
+    desc: "Crisp product animations, explainer reels, and distinctive brand visuals.",
     cursor: "FACE 04",
   },
   {
@@ -66,7 +66,7 @@ export default function CapabilitiesSection({ onSelectFace }) {
           Full-stack craft. <em>One</em> focused studio.
         </h2>
         <p className="section-subtext">
-          Hover or click any capability to turn the 3D cube and explore how we engineer each solution.
+          Hover or click any capability to turn the interactive monolith and explore how we engineer each solution.
         </p>
       </div>
 

@@ -50,7 +50,7 @@ export default function CustomCursor() {
             textRef.current.textContent = customCursor;
             ringRef.current.classList.add("has-label");
             ringRef.current.classList.remove("mode-drag", "mode-explore", "mode-lock");
-            if (customCursor === "DRAG" || customCursor === "ROLL 3D" || customCursor === "ROLL") {
+            if (customCursor === "DRAG" || customCursor === "ROLL 3D" || customCursor === "ROLL" || customCursor === "ROTATE") {
               ringRef.current.classList.add("mode-drag");
             }
             if (customCursor === "EXPLORE" || customCursor === "ABOUT") {

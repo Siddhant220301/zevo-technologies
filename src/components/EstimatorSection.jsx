@@ -5,9 +5,9 @@ import sound from "@/utils/audio";
 
 const moduleData = {
   erp: { name: "Custom Operations Tool / ERP", inr: 1.8, inrTag: "1.8L", usd: 2200, usdTag: "2.2k", hrs: 80, face: 0 },
-  webgl: { name: "3D Web & Product Visualizer", inr: 1.2, inrTag: "1.2L", usd: 1500, usdTag: "1.5k", hrs: 55, face: 1 },
+  webgl: { name: "Interactive Web & Product Visualizer", inr: 1.2, inrTag: "1.2L", usd: 1500, usdTag: "1.5k", hrs: 55, face: 1 },
   ai: { name: "WhatsApp & Workflow Automation", inr: 0.95, inrTag: "95k", usd: 1200, usdTag: "1.2k", hrs: 45, face: 2 },
-  video: { name: "3D Motion Design & Assets", inr: 0.65, inrTag: "65k", usd: 850, usdTag: "850", hrs: 30, face: 3 },
+  video: { name: "Motion Design & Visual Assets", inr: 0.65, inrTag: "65k", usd: 850, usdTag: "850", hrs: 30, face: 3 },
   seo: { name: "Search & Speed Optimization", inr: 0.45, inrTag: "45k", usd: 600, usdTag: "600", hrs: 25, face: 4 },
   mobile: { name: "Mobile App (iOS & Android)", inr: 1.4, inrTag: "1.4L", usd: 1800, usdTag: "1.8k", hrs: 65, face: 5 },
 };
@@ -184,9 +184,9 @@ export default function EstimatorSection({ onSelectFace, onRandomizeSpec }) {
                     <strong>{mod.name}</strong>
                     <span>
                       {key === "erp" && "Inventory, orders, GST & invoicing"}
-                      {key === "webgl" && "Interactive 60fps 3D experience"}
+                      {key === "webgl" && "Interactive 60fps product experience"}
                       {key === "ai" && "Automated customer alerts & integrations"}
-                      {key === "video" && "Product trailers & visual reels"}
+                      {key === "video" && "Product trailers, explainers & visual reels"}
                       {key === "seo" && "Technical SEO & fast landing pages"}
                       {key === "mobile" && "Cross-platform React Native / Flutter"}
                     </span>
@@ -262,11 +262,11 @@ export default function EstimatorSection({ onSelectFace, onRandomizeSpec }) {
       <div className="est-spatial-companion interactive-zone tilt-card">
         <div>
           <span className="section-tag" style={{ color: "var(--klein-blue)" }}>
-            // 3D KINETIC CO-PILOT
+            // INTERACTIVE STAGE CO-PILOT
           </span>
           <h3>Die Responds To Your Stack</h3>
           <p>
-            Every module you check or uncheck dynamically commands the 3D die, orienting the
+            Every module you check or uncheck dynamically commands the visual monolith, orienting the
             relevant capability into focus.
           </p>
           <div className="est-spec-pills">
@@ -290,7 +290,7 @@ export default function EstimatorSection({ onSelectFace, onRandomizeSpec }) {
             data-cursor="ROLL"
             onClick={handleRandomizeClick}
           >
-            <span>🎲 ROLL 3D DIE &amp; RANDOMIZE SPEC</span>
+            <span>🎲 ROLL DIE &amp; RANDOMIZE SPEC</span>
           </button>
         </div>
       </div>

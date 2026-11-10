@@ -1,9 +1,9 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "ZEVO TECHNOLOGIES — Independent Web & Product Studio",
+  title: "ZEVO TECHNOLOGIES — Digital Product & Engineering Studio",
   description:
-    "Independent 2-person digital product and engineering studio. We build custom business tools, operations portals, interactive 3D web experiences, and high-performance web applications.",
+    "Full-service digital product and engineering studio. We build custom business tools, operations portals, interactive web applications, and high-performance digital systems.",
   other: {
     "darkreader-lock": "true",
     "color-scheme": "light",

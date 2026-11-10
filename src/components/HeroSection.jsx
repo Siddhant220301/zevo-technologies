@@ -49,17 +49,17 @@ export default function HeroSection() {
     <section className="hero-section content-grid" id="hero">
       <div className="hero-status-pill interactive-zone">
         <span className="live-dot" />
-        <span>INDEPENDENT 2-PERSON STUDIO // ACCEPTING SELECT NEW PROJECTS</span>
+        <span>FULL-SERVICE ENGINEERING &amp; PRODUCT STUDIO // ACCEPTING SELECT NEW PROJECTS</span>
       </div>
 
       <h1 className="hero-headline">
         We build custom web apps, <br />
-        <span className="serif-em">interactive 3D platforms</span> <br />
+        <span className="serif-em">interactive digital platforms</span> <br />
         &amp; business tools.
       </h1>
 
       <p className="hero-subhead">
-        We are an independent engineering &amp; design duo. We help ambitious businesses replace
+        We are a dedicated engineering &amp; design studio. We help ambitious businesses replace
         chaotic spreadsheets and slow, expensive software with fast, custom-built tools and modern
         web experiences they 100% own.
       </p>
@@ -67,8 +67,8 @@ export default function HeroSection() {
       <div className="hero-lower-deck">
         <div className="hero-manifesto-card interactive-zone tilt-card">
           <p style={{ fontSize: "0.95rem", color: "var(--ink-secondary)", lineHeight: "1.65" }}>
-            Direct collaboration with the two founders from day one. You keep 100% source code,
-            data, and database ownership with zero monthly per-seat software fees. Shipped in
+            Direct collaboration with our senior engineering team from day one. You keep 100% source
+            code, data, and database ownership with zero monthly per-seat software fees. Shipped in
             focused, transparent 2-week milestones.
           </p>
           <div className="hero-cta-cluster">
@@ -98,9 +98,9 @@ export default function HeroSection() {
               <span id="mCount1" ref={m1Ref}>
                 2
               </span>
-              <span />
+              <span>Wks</span>
             </div>
-            <span className="lbl">Founders Directly On Code</span>
+            <span className="lbl">Agile Sprint Deployments</span>
           </div>
           <div className="metric-item tilt-card">
             <div className="val">

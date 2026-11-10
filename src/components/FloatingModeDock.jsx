@@ -22,7 +22,7 @@ export default function FloatingModeDock({ onFormationChange, activeSector }) {
   return (
     <>
       <div className="floating-mode-dock interactive-zone">
-        <span className="dock-title">3D ENGINE:</span>
+        <span className="dock-title">ENGINE:</span>
         <button
           type="button"
           className={`dock-pill ${activeFormation === "dice" ? "active" : ""}`}

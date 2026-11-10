@@ -255,12 +255,12 @@ export default function MotionLabSection() {
   return (
     <section className="section-wrap content-grid" id="motion">
       <div className="motion-left-col">
-        <span className="section-tag">// 05 — 3D &amp; MOTION LAB</span>
+        <span className="section-tag">// 05 — MOTION LAB</span>
         <h2 className="section-title">
-          3D visuals that make your products <em>stand out</em>.
+          Visuals and motion that make your products <em>stand out</em>.
         </h2>
         <p className="section-subtext">
-          We design interactive 3D web components and motion graphics that help modern brands showcase
+          We design interactive web components and kinetic motion graphics that help modern brands showcase
           products in detail and captivate visitors.
         </p>
       </div>
@@ -278,7 +278,7 @@ export default function MotionLabSection() {
             <div className="canvas-hud-header">
               <span>
                 <i className="recording-dot" />
-                INTERACTIVE 3D &amp; MOTION VIEWER
+                INTERACTIVE MOTION &amp; MEDIA VIEWER
               </span>
               <span id="reelTimecode" ref={timecodeRef}>
                 REAL-TIME PREVIEW // 60FPS
@@ -294,7 +294,7 @@ export default function MotionLabSection() {
               onClick={() => handleReelClick("0", 0)}
             >
               <span className="sub">STYLE 01 //</span>
-              <strong>3D Product Launch</strong>
+              <strong>Interactive Product Launch</strong>
             </button>
             <button
               type="button"

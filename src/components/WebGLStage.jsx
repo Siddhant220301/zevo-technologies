@@ -8,9 +8,9 @@ import sound from "@/utils/audio";
 
 export const faceRotations = [
   { x: 0, y: -Math.PI / 2, label: "01 // CUSTOM OPERATIONS & ERP" },
-  { x: 0, y: Math.PI / 2, label: "02 // 3D WEB & SHOWCASES" },
+  { x: 0, y: Math.PI / 2, label: "02 // INTERACTIVE WEB APPS" },
   { x: Math.PI / 2, y: 0, label: "03 // WORKFLOW AUTOMATIONS" },
-  { x: -Math.PI / 2, y: 0, label: "04 // 3D MOTION DESIGN" },
+  { x: -Math.PI / 2, y: 0, label: "04 // MOTION & BRAND MEDIA" },
   { x: 0, y: 0, label: "05 // WEB APPLICATIONS" },
   { x: 0, y: Math.PI, label: "06 // MOBILE APPLICATIONS" },
 ];
@@ -84,9 +84,9 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
     // High-Resolution Procedural Canvas Textures for the 6 Faces of the Die
     const faceSpecs = [
       { id: "01", title: "CUSTOM ERP", sub: "OPERATIONS & BILLING", pips: 1, bg1: "#0A1226", bg2: "#142852", accent: "#38BDF8", line: "#2563EB", textColor: "#FFFFFF" },
-      { id: "02", title: "3D WEBGL", sub: "INTERACTIVE EXPERIENCES", pips: 2, bg1: "#1D4ED8", bg2: "#2563EB", accent: "#FACC15", line: "#FDE047", textColor: "#FFFFFF" },
+      { id: "02", title: "INTERACTIVE", sub: "WEB EXPERIENCES", pips: 2, bg1: "#1D4ED8", bg2: "#2563EB", accent: "#FACC15", line: "#FDE047", textColor: "#FFFFFF" },
       { id: "03", title: "AUTOMATIONS", sub: "WHATSAPP & REALTIME APIS", pips: 3, bg1: "#4C0519", bg2: "#881337", accent: "#FB7185", line: "#FDA4AF", textColor: "#FFFFFF" },
-      { id: "04", title: "3D MOTION", sub: "KINETIC PRODUCT VISUALS", pips: 4, bg1: "#FFFFFF", bg2: "#E2E8F0", accent: "#0284C7", line: "#38BDF8", textColor: "#0F172A" },
+      { id: "04", title: "MOTION", sub: "KINETIC BRAND VISUALS", pips: 4, bg1: "#FFFFFF", bg2: "#E2E8F0", accent: "#0284C7", line: "#38BDF8", textColor: "#0F172A" },
       { id: "05", title: "WEB APPS", sub: "FULL-STACK NEXT.JS CLOUD", pips: 5, bg1: "#DC2626", bg2: "#EF4444", accent: "#FFFFFF", line: "#FEF08A", textColor: "#FFFFFF" },
       { id: "06", title: "MOBILE APPS", sub: "NATIVE IOS & ANDROID", pips: 6, bg1: "#064E3B", bg2: "#047857", accent: "#A7F3D0", line: "#34D399", textColor: "#FFFFFF" },
     ];
@@ -688,7 +688,7 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
         if (cursorRing) {
           cursorRing.classList.add("has-label", "mode-drag");
           cursorRing.classList.remove("mode-explore");
-          if (cursorText) cursorText.textContent = "ROTATE 3D";
+          if (cursorText) cursorText.textContent = "ROTATE";
         }
         sound.playClick(920);
       } else {
@@ -1011,7 +1011,7 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
       <canvas
         id="webgl-stage"
         ref={canvasRef}
-        aria-label="Interactive 3D Architectural Dice Monolith"
+        aria-label="Interactive Architectural Dice Monolith"
       />
     </>
   );
