@@ -2,7 +2,7 @@ export default function AboutSection() {
   return (
     <section className="section-wrap content-grid" id="about">
       <div className="section-header-left">
-        <span className="section-tag">// 01 — WHO WE ARE</span>
+        <span className="section-tag">{"// 01 — WHO WE ARE"}</span>
         <h2 className="section-title">
           A dedicated engineering team. <br />
           <em>Zero</em> corporate bureaucracy.

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import sound from "@/utils/audio";
 
 const capabilities = [
   {
@@ -51,6 +50,7 @@ const capabilities = [
 export default function CapabilitiesSection({ onSelectFace }) {
   const [activeFace, setActiveFace] = useState(0);
 
+  // Hover on desktop, tap on touch: the row lights up and the die turns to its face
   const handleSnap = (faceIdx) => {
     setActiveFace(faceIdx);
     if (onSelectFace) {
@@ -61,7 +61,7 @@ export default function CapabilitiesSection({ onSelectFace }) {
   return (
     <section className="section-wrap content-grid" id="capabilities">
       <div className="section-header-right">
-        <span className="section-tag">// 03 — WHAT WE BUILD</span>
+        <span className="section-tag">{"// 03 — WHAT WE BUILD"}</span>
         <h2 className="section-title">
           Full-stack craft. <em>One</em> focused studio.
         </h2>

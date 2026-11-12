@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+/* Fonts are self-hosted through next/font (see app/layout.js) and exposed as
+   --font-jakarta / --font-instrument / --font-space-mono on <html>. */
 
 /* =========================================================================
    ZEVO TECHNOLOGIES — SPATIAL ENGINEERING & CREATIVE SYSTEMS
@@ -74,10 +75,10 @@
   --stage-shadow: drop-shadow(0 28px 54px rgba(9, 10, 15, 0.15)) drop-shadow(0 0 38px rgba(30, 58, 255, 0.12));
 
   /* Typography Stacks */
-  --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'Space Mono', 'SF Mono', Monaco, Consolas, 'Liberation Mono', monospace;
+  --font-display: var(--font-jakarta, 'Plus Jakarta Sans'), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: var(--font-instrument, 'Instrument Serif'), Georgia, 'Times New Roman', serif;
+  --font-sans: var(--font-jakarta, 'Plus Jakarta Sans'), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: var(--font-space-mono, 'Space Mono'), 'SF Mono', Monaco, Consolas, 'Liberation Mono', monospace;
 
   /* Precision Physics & Motion Easings */
   --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
@@ -634,7 +635,7 @@ body.dark-chapter .structural-lines div::after {
     background 0.25s ease,
     box-shadow 0.25s ease;
   box-shadow: 0 0 12px var(--vermilion-glow);
-  will-change: left, top, width, height;
+  will-change: transform;
 }
 
 .cursor-ring {
@@ -663,7 +664,7 @@ body.dark-chapter .structural-lines div::after {
     background 0.25s ease,
     box-shadow 0.25s ease;
   backdrop-filter: blur(2px);
-  will-change: left, top, width, height;
+  will-change: transform;
 }
 
 .cursor-ring span {
@@ -757,8 +758,12 @@ body.dark-chapter .cursor-ring.has-label span {
   left: 0;
   width: 100vw;
   height: 100vh;
+  /* lvh keeps the canvas box stable while a mobile address bar shows/hides */
+  height: 100lvh;
   z-index: 2;
   pointer-events: auto;
+  /* vertical swipes always scroll the page; horizontal drags reach the die */
+  touch-action: pan-y;
   background: transparent;
   display: block;
   outline: none;
@@ -785,7 +790,6 @@ body.dark-chapter .cursor-ring.has-label span {
   padding: 0 32px;
   background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--ink-border);
   box-shadow: 0 4px 20px rgba(9, 10, 15, 0.04), var(--card-specular);
   transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
@@ -1117,7 +1121,6 @@ body.dark-chapter .btn-header-cta:hover {
   padding: 7px 12px;
   background: var(--bg-glass-heavy);
   backdrop-filter: blur(24px) saturate(190%);
-  -webkit-backdrop-filter: blur(24px) saturate(190%);
   border: 1px solid var(--ink-border-heavy);
   border-radius: var(--radius-full);
   box-shadow: var(--card-shadow-lg), var(--card-specular);
@@ -1197,7 +1200,6 @@ body.dark-chapter .dock-pill.active {
   color: var(--ink-secondary);
   background: var(--bg-glass-heavy);
   backdrop-filter: blur(24px) saturate(190%);
-  -webkit-backdrop-filter: blur(24px) saturate(190%);
   border: 1px solid var(--ink-border-heavy);
   padding: 10px 18px;
   border-radius: var(--radius-full);
@@ -1333,8 +1335,10 @@ body.dark-chapter .tilt-card::after {
    ========================================================================= */
 .hero-section {
   min-height: 100vh;
-  padding-top: calc(var(--header-height) + 56px);
-  padding-bottom: 84px;
+  min-height: 100svh;
+  /* vertical rhythm scales with viewport height so the CTAs stay above the fold */
+  padding-top: calc(var(--header-height) + clamp(20px, 3.2vh, 56px));
+  padding-bottom: clamp(36px, 6vh, 84px);
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   column-gap: var(--grid-gutter);
@@ -1351,7 +1355,6 @@ body.dark-chapter .tilt-card::after {
   padding: 8px 18px;
   background: var(--bg-glass-heavy);
   backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--ink-border-heavy);
   border-radius: var(--radius-full);
   font-family: var(--font-mono);
@@ -1360,7 +1363,7 @@ body.dark-chapter .tilt-card::after {
   font-weight: 700;
   color: var(--ink-secondary);
   width: fit-content;
-  margin-bottom: 24px;
+  margin-bottom: clamp(14px, 2.2vh, 24px);
   box-shadow: var(--card-shadow-sm), var(--card-specular);
   transition: all 0.35s var(--ease-spring);
 }
@@ -1412,11 +1415,11 @@ body.dark-chapter .hero-status-pill {
   grid-column: 1 / 8;
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(2.9rem, 5.1vw, 5.1rem);
+  font-size: clamp(2.4rem, min(5.1vw, 6.6vh), 5.1rem);
   line-height: 1.04;
   letter-spacing: -0.04em;
   color: var(--ink);
-  margin-bottom: 24px;
+  margin-bottom: clamp(14px, 2.2vh, 24px);
   text-wrap: balance;
   transition: color 0.4s ease;
 }
@@ -1454,7 +1457,7 @@ body.dark-chapter .serif-em {
   font-size: clamp(1.02rem, 1.28vw, 1.18rem);
   color: var(--ink-secondary);
   line-height: 1.68;
-  margin-bottom: 36px;
+  margin-bottom: clamp(18px, 3vh, 36px);
   max-width: 610px;
   font-weight: 500;
 }
@@ -1473,21 +1476,20 @@ body.dark-chapter .hero-subhead strong {
   grid-column: 1 / 8;
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: clamp(12px, 2vh, 22px);
   max-width: 650px;
 }
 
 .hero-manifesto-card {
   background: var(--surface-glass);
   backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-md);
-  padding: 26px 30px;
+  padding: clamp(18px, 2.4vh, 26px) 30px;
   box-shadow: var(--card-shadow), var(--card-specular);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: clamp(14px, 1.8vh, 20px);
   position: relative;
   overflow: hidden;
   transition: all 0.38s var(--ease-spring);
@@ -1631,7 +1633,6 @@ body.dark-chapter .btn-action-secondary:hover {
 .metric-item {
   background: var(--surface-glass);
   backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-sm);
   padding: 16px 14px;
@@ -1698,7 +1699,6 @@ body.dark-chapter .metric-item .val span:last-child {
   border-bottom: 1px solid var(--ink-border-heavy);
   background: var(--bg-glass-heavy);
   backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   z-index: 10;
   mask-image: linear-gradient(to right, transparent 0%, black 7%, black 93%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 7%, black 93%, transparent 100%);
@@ -1717,6 +1717,12 @@ body.dark-chapter .enterprise-marquee-wrap {
   width: max-content;
   animation: marquee-drift 34s linear infinite;
   will-change: transform;
+}
+
+.marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 34px;
 }
 
 .marquee-track:hover {
@@ -1888,7 +1894,6 @@ body.dark-chapter .section-title em {
 .about-card {
   background: var(--surface-glass);
   backdrop-filter: blur(22px) saturate(180%);
-  -webkit-backdrop-filter: blur(22px) saturate(180%);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-md);
   padding: 30px 34px;
@@ -2050,7 +2055,6 @@ body.dark-chapter .about-badge {
 .mission-card {
   background: var(--surface-glass);
   backdrop-filter: blur(22px) saturate(180%);
-  -webkit-backdrop-filter: blur(22px) saturate(180%);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-md);
   padding: 30px 28px;
@@ -2146,15 +2150,19 @@ body.dark-chapter .mission-card h3 {
 .cap-card-row {
   background: var(--surface-glass);
   backdrop-filter: blur(22px) saturate(180%);
-  -webkit-backdrop-filter: blur(22px) saturate(180%);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-md);
   padding: 22px 26px;
   box-shadow: var(--card-shadow-sm), var(--card-specular);
   display: grid;
-  grid-template-columns: 95px 1.35fr 1.85fr 32px;
+  /* code chip sits above the title so it can never wrap into a narrow column */
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.6fr) 28px;
+  grid-template-areas:
+    "code  desc arrow"
+    "title desc arrow";
   align-items: center;
-  gap: 18px;
+  column-gap: 22px;
+  row-gap: 8px;
   text-decoration: none;
   color: inherit;
   transition: all 0.32s var(--ease-spring);
@@ -2211,9 +2219,12 @@ body.dark-chapter .cap-card-row.active-face {
   padding: 5px 10px;
   border-radius: var(--radius-xs);
   width: fit-content;
+  grid-area: code;
+  white-space: nowrap;
 }
 
 .cap-main-title {
+  grid-area: title;
   font-family: var(--font-sans);
   font-weight: 800;
   font-size: 1.12rem;
@@ -2229,12 +2240,14 @@ body.dark-chapter .cap-card-row.active-face {
 }
 
 .cap-subtext {
+  grid-area: desc;
   font-size: 0.86rem;
   line-height: 1.55;
   color: var(--ink-secondary);
 }
 
 .cap-arrow-icon {
+  grid-area: arrow;
   font-family: var(--font-mono);
   font-size: 1.15rem;
   font-weight: 700;
@@ -2300,7 +2313,6 @@ body.dark-chapter .cap-card-row.active-face .cap-arrow-icon {
 .erp-card {
   background: var(--surface-glass);
   backdrop-filter: blur(22px) saturate(180%);
-  -webkit-backdrop-filter: blur(22px) saturate(180%);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-md);
   padding: 32px 30px;
@@ -2600,7 +2612,6 @@ body.dark-chapter .erp-tab-btn.active {
   color: rgba(255, 255, 255, 0.88);
   background: rgba(6, 8, 16, 0.72);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   padding: 7px 14px;
   border-radius: var(--radius-full);
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -2694,7 +2705,6 @@ body.dark-chapter .erp-tab-btn.active {
   grid-column: span 1;
   background: var(--surface-glass);
   backdrop-filter: blur(22px) saturate(180%);
-  -webkit-backdrop-filter: blur(22px) saturate(180%);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-md);
   padding: 34px 28px;
@@ -2858,7 +2868,6 @@ body.dark-chapter .curr-btn.active {
   grid-column: 1 / 9;
   background: var(--surface-glass);
   backdrop-filter: blur(24px) saturate(190%);
-  -webkit-backdrop-filter: blur(24px) saturate(190%);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-lg);
   padding: 36px;
@@ -3034,7 +3043,6 @@ body.dark-chapter .curr-btn.active {
   grid-column: 9 / 13;
   background: var(--surface-glass);
   backdrop-filter: blur(22px) saturate(180%);
-  -webkit-backdrop-filter: blur(22px) saturate(180%);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-lg);
   padding: 34px 28px;
@@ -3116,7 +3124,6 @@ body.dark-chapter .tier-btn.active {
   grid-column: 6 / 13;
   background: var(--surface-glass);
   backdrop-filter: blur(24px) saturate(190%);
-  -webkit-backdrop-filter: blur(24px) saturate(190%);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-lg);
   padding: 42px 44px;
@@ -3208,7 +3215,6 @@ footer {
   padding: 56px 44px 100px;
   background: var(--bg-glass-heavy);
   backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   position: relative;
   z-index: 10;
   display: flex;
@@ -3319,10 +3325,6 @@ body.dark-chapter .footer-brand {
     grid-template-columns: 1fr;
   }
 
-  /* Subtle 3D Stage opacity on tablets where content spans full width */
-  #webgl-stage {
-    opacity: 0.42;
-  }
 }
 
 @media (max-width: 768px) {
@@ -3346,11 +3348,11 @@ body.dark-chapter .footer-brand {
   }
 
   .cap-card-row {
-    grid-template-columns: 84px 1fr 28px;
-  }
-
-  .cap-subtext {
-    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr) 28px;
+    grid-template-areas:
+      "code  arrow"
+      "title title"
+      "desc  desc";
   }
 
   .reel-buttons-bar,
@@ -3389,7 +3391,6 @@ body.dark-chapter .footer-brand {
 
   .cursor-dot,
   .cursor-ring,
-  .audio-toggle-btn,
   .brand-tagline {
     display: none !important;
   }
@@ -3420,11 +3421,1270 @@ body.dark-chapter .footer-brand {
   }
 }
 
+/* =========================================================================
+   19. NATIVE CARET, TOUCH POINTERS, MOBILE NAVIGATION & TOUCH TARGETS
+   ========================================================================= */
+
+/* Text fields keep the native caret; the custom cursor steps aside over them */
+input:not([type="checkbox"]):not([type="radio"]),
+textarea {
+  cursor: text;
+}
+
+.cursor-dot.is-native,
+.cursor-ring.is-native {
+  opacity: 0;
+}
+
+/* Touch / coarse pointers never see the custom cursor */
+@media (hover: none),
+(pointer: coarse) {
+
+  body,
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  label {
+    cursor: auto;
+  }
+
+  .cursor-dot,
+  .cursor-ring {
+    display: none !important;
+  }
+}
+
+/* =========================================================================
+   21. MOTION SYSTEM SUPPORT
+   ========================================================================= */
+
+/* --- Arrival ---------------------------------------------------------------
+   The hero enters from the very first frame with plain CSS animations, so it
+   never waits for — and can never be stalled by — a script. The inline script
+   in layout.js adds .motion-ok before first paint; without it nothing is ever
+   hidden. Every animation fills backwards only: once it has played, the
+   element is exactly what its own rules say. */
+@keyframes arrive-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--arrive-y, 22px), 0);
+  }
+}
+
+@keyframes arrive-drop {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -40%, 0);
+  }
+}
+
+/* A line rising out of a fixed edge just below it (the clip moves against the
+   slide, so the edge stays put) */
+@keyframes arrive-line {
+  from {
+    transform: translate3d(0, 112%, 0);
+    clip-path: inset(0 0 100% 0);
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+    clip-path: inset(-25% -25% -14% -25%);
+  }
+}
+
+@keyframes arrive-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.hero-headline .hl-line {
+  display: block;
+}
+
+html.motion-ok .top-rail {
+  animation: arrive-drop 0.7s var(--ease-out-expo) backwards;
+}
+
+html.motion-ok .hero-status-pill {
+  --arrive-y: 14px;
+  animation: arrive-rise 0.7s var(--ease-out-expo) 0.1s backwards;
+}
+
+html.motion-ok .hero-headline .hl-line {
+  animation: arrive-line 1.05s var(--ease-out-expo) 0.2s backwards;
+}
+
+html.motion-ok .hero-headline .hl-line:nth-child(2) {
+  animation-delay: 0.29s;
+}
+
+html.motion-ok .hero-headline .hl-line:nth-child(3) {
+  animation-delay: 0.38s;
+}
+
+html.motion-ok .hero-subhead {
+  --arrive-y: 16px;
+  animation: arrive-rise 0.8s var(--ease-out-expo) 0.55s backwards;
+}
+
+/* On desktop the card and metrics are part of the first screen. On phones they
+   sit below it and enter on scroll with the other cards. */
+@media (min-width: 1025px) {
+  html.motion-ok .hero-manifesto-card {
+    animation: arrive-rise 0.9s var(--ease-out-expo) 0.7s backwards;
+  }
+
+  html.motion-ok .hero-metrics-deck .metric-item {
+    animation: arrive-rise 0.7s var(--ease-out-expo) 0.85s backwards;
+  }
+
+  html.motion-ok .hero-metrics-deck .metric-item:nth-child(2) {
+    animation-delay: 0.92s;
+  }
+
+  html.motion-ok .hero-metrics-deck .metric-item:nth-child(3) {
+    animation-delay: 0.99s;
+  }
+
+  html.motion-ok .hero-metrics-deck .metric-item:nth-child(4) {
+    animation-delay: 1.06s;
+  }
+
+  html.motion-calm .hero-manifesto-card,
+  html.motion-calm .hero-metrics-deck .metric-item {
+    animation-name: arrive-fade;
+    animation-duration: 0.6s;
+  }
+}
+
+/* Phones and tablets: the headline lines rise with transform and opacity only,
+   which the compositor runs on its own, so they stay smooth while the page's
+   scripts start up on a slower processor */
+@media (max-width: 1024px) {
+  html.motion-full .hero-headline .hl-line {
+    --arrive-y: 0.55em;
+    animation-name: arrive-rise;
+    animation-duration: 0.95s;
+  }
+}
+
+/* --- Entrances on scroll ---------------------------------------------------
+   MotionDirector adds .rv to an element that is still below the screen and
+   .rv-in when it comes into view. The waiting state is this class (never an
+   inline style) and the animation fills backwards only, so an element can
+   never be left hidden: take the classes away and it is simply there. */
+@keyframes rv-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--rv-y, 26px), 0);
+  }
+}
+
+@keyframes rv-tag {
+  from {
+    opacity: 0;
+    transform: translate3d(-14px, 0, 0);
+  }
+}
+
+@keyframes rv-line {
+  from {
+    transform: translate3d(0, 112%, 0);
+  }
+}
+
+.rv:not(.rv-in) {
+  opacity: 0;
+}
+
+/* While an element waits for or plays its entrance, its own transitions stay
+   out of the way: a transition outranks an animation and would cut it short */
+.rv {
+  transition: none !important;
+}
+
+.rv.rv-in {
+  animation: rv-rise 0.95s var(--ease-out-expo) var(--rv-delay, 0s) backwards;
+}
+
+.rv.rv-in[data-rv="tag"] {
+  animation-name: rv-tag;
+  animation-duration: 0.6s;
+}
+
+.rv.rv-in[data-rv="soft"] {
+  --rv-y: 14px;
+  animation-duration: 0.8s;
+}
+
+/* Must stay in step with LINE_SECONDS in MotionDirector.jsx */
+.rv.rv-in[data-rv="line"] {
+  animation-name: rv-line;
+  animation-duration: 1s;
+}
+
+@media (max-width: 768px) {
+  .rv.rv-in {
+    --rv-y: 16px;
+  }
+}
+
+/* --- Calm mode -------------------------------------------------------------
+   The system asks for reduced motion and the visitor has not chosen otherwise
+   (see lib/motion.js). Entrances become short fades, strips that move on
+   their own stand still and decorative loops stop. Hover and focus keep their
+   quick transitions: that is feedback, not motion. */
+html.motion-calm .top-rail,
+html.motion-calm .hero-status-pill,
+html.motion-calm .hero-headline .hl-line,
+html.motion-calm .hero-subhead {
+  animation-name: arrive-fade;
+  animation-duration: 0.6s;
+}
+
+html.motion-calm .rv.rv-in {
+  --rv-y: 10px;
+  animation-name: rv-rise;
+  animation-duration: 0.55s;
+}
+
+html.motion-calm .marquee-track {
+  animation-play-state: paused;
+}
+
+html.motion-calm .serif-em,
+html.motion-calm .structural-lines *,
+html.motion-calm .structural-lines *::before,
+html.motion-calm .structural-lines *::after {
+  animation: none;
+}
+
+/* Header hairline is the scroll-progress bar instead of an endless sweep */
+.top-rail::after {
+  animation: none;
+  background-size: 100% 100%;
+  transform-origin: left center;
+  transform: scaleX(var(--scroll-progress, 0));
+  height: 2px;
+  opacity: 1;
+}
+
+@media (min-width: 1025px) {
+  .top-rail {
+    transition:
+      height 0.4s var(--ease-smooth),
+      transform 0.34s var(--ease-smooth),
+      background 0.35s ease,
+      border-color 0.35s ease,
+      box-shadow 0.35s ease;
+  }
+
+  .top-rail.is-compact {
+    height: 62px;
+  }
+}
+
+/* Scroll-spy: the nav shows where you are */
+.nav-menu li a.is-active {
+  color: var(--klein-blue);
+  background: rgba(30, 58, 255, 0.1);
+}
+
+body.dark-chapter .nav-menu li a.is-active {
+  color: var(--acid-gold);
+  background: rgba(216, 255, 0, 0.14);
+}
+
+/* Calm at rest: sheens play once on hover, badges stop bobbing, glows stop pulsing */
+.btn-action-primary::before,
+.roll-dice-header-btn::before,
+.brand-cube-badge::before {
+  animation: none;
+  opacity: 0;
+}
+
+.btn-action-primary:hover::before,
+.roll-dice-header-btn:hover::before,
+.brand-cluster:hover .brand-cube-badge::before {
+  animation: button-sheen 0.9s cubic-bezier(0.4, 0, 0.2, 1) 1;
+}
+
+.brand-cube-badge,
+.floating-mode-dock,
+.audio-toggle-btn.active,
+.erp-card.zevo-card .erp-pill-badge {
+  animation: none;
+}
+
+/* Chapter change: the dark backdrop opens as a circle from the die's side */
+#theme-underlay {
+  opacity: 1 !important;
+  clip-path: circle(0% at 82% 42%);
+  transition: clip-path 0.9s var(--ease-in-out-cubic);
+  will-change: clip-path;
+}
+
+body.dark-chapter #theme-underlay {
+  clip-path: circle(150% at 82% 42%);
+}
+
+/* =========================================================================
+   22. STAGE SLOTS — empty space reserved for the 3D die
+   Sections 1-5 leave a free column on desktop. Everywhere else the die gets a
+   real, reserved area so it stays large instead of shrinking into a corner.
+   ========================================================================= */
+.stage-slot {
+  pointer-events: none;
+}
+
+/* Phone-only stage area (desktop uses the free column instead) */
+.stage-slot--hero {
+  display: none;
+}
+
+/* Motion Lab: the die sits under the copy in the left column */
+.motion-left-col {
+  justify-content: flex-start;
+}
+
+.motion-left-col .stage-slot {
+  flex: 1 1 auto;
+  min-height: 380px;
+  margin-top: 8px;
+}
+
+.motion-right-col {
+  align-self: center;
+}
+
+/* Case Studies: the die sits beside the heading */
+#cases .section-header-left {
+  grid-column: 1 / 9;
+}
+
+#cases .stage-slot {
+  grid-column: 9 / 13;
+  grid-row: 1;
+  min-height: 320px;
+  margin-bottom: 36px;
+}
+
+/* Closing band between the contact section and the footer: the die comes to rest */
+#contact {
+  padding-bottom: 56px;
+}
+
+.stage-slot--closing {
+  width: 100%;
+  height: 360px;
+  margin-bottom: 28px;
+}
+
+/* The wider dock (four formations) needs the read-out's room on smaller desktops */
+@media (max-width: 1320px) {
+  .dice-telemetry-badge {
+    display: none;
+  }
+}
+
+/* With the motion switch in the dock it needs the read-out's room for longer */
+@media (max-width: 1679px) {
+  body:has(.dock-pill--motion) .dice-telemetry-badge {
+    display: none;
+  }
+}
+
+/* Estimator: an empty window above the companion card where the die rides. */
+.est-stage-window {
+  grid-column: 9 / 13;
+  height: 320px;
+  pointer-events: none;
+}
+
+.estimator-box {
+  grid-row: 2 / span 2;
+}
+
+@media (max-width: 1280px) {
+  .est-stage-window {
+    grid-column: 1 / 13;
+    height: 230px;
+  }
+
+  .estimator-box {
+    grid-row: auto;
+  }
+}
+
+/* Phones and tablets: the die leads in the hero stage, travels behind the
+   content as a soft presence and comes to rest in the closing band. Windows
+   reserved inside sections are a desktop device — in a single column they
+   would only be empty gaps, so they are removed. */
+@media (max-width: 1024px) {
+  .stage-slot--hero {
+    display: block;
+    grid-column: 1 / 13;
+    height: clamp(220px, 34svh, 320px);
+  }
+
+  .motion-left-col .stage-slot,
+  #cases .stage-slot,
+  .est-stage-window {
+    display: none;
+  }
+
+  #cases .section-header-left {
+    grid-column: 1 / 13;
+  }
+
+  .stage-slot--closing {
+    height: 300px;
+    margin-bottom: 12px;
+  }
+
+  .mobile-menu-pills .dock-pill:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Lenis smooth scrolling (desktop only) owns the scroll position while active */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+/* The dock steps aside whenever it would sit on top of a call-to-action */
+.floating-mode-dock.is-tucked,
+.dice-telemetry-badge.is-tucked {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  pointer-events: none;
+  animation: none;
+}
+
+/* Currency glyphs render in the sans face (Space Mono has no rupee sign) */
+.cur {
+  font-family: var(--font-sans);
+  font-weight: 700;
+}
+
+/* Contact details block */
+.contact-meta {
+  margin-top: 28px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.contact-meta strong {
+  color: var(--ink);
+}
+
+.contact-meta .muted {
+  color: var(--ink-secondary);
+}
+
+.contact-meta .contact-email-row {
+  margin-top: 12px;
+}
+
+.contact-meta a {
+  color: var(--klein-blue);
+  font-weight: 700;
+}
+
+body.dark-chapter .contact-meta a {
+  color: var(--acid-gold);
+}
+
+/* Enquiry form feedback */
+.hp-field {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.form-input[aria-invalid="true"] {
+  border-color: var(--vermilion);
+  box-shadow: 0 0 0 4px var(--vermilion-subtle);
+}
+
+.form-field-error {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--vermilion);
+}
+
+.form-status {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--ink-border);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  letter-spacing: 0.02em;
+  color: var(--ink-secondary);
+}
+
+.form-status[data-kind="ok"] {
+  color: var(--emerald);
+  background: var(--emerald-subtle);
+  border-color: var(--emerald-glow);
+}
+
+.form-status[data-kind="error"] {
+  color: var(--vermilion);
+  background: var(--vermilion-subtle);
+  border-color: rgba(255, 51, 31, 0.3);
+}
+
+.form-fallback-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.form-fallback-row .whatsapp-quick-btn,
+.form-fallback-row .btn-action-secondary {
+  margin-top: 0;
+}
+
+.btn-action-primary[disabled] {
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.btn-action-primary.is-success,
+body.dark-chapter .btn-action-primary.is-success {
+  background: #10B981;
+  color: #FFFFFF;
+  box-shadow: 0 10px 26px var(--emerald-glow);
+}
+
+/* Menu button — only shown where the inline nav is hidden */
+.menu-toggle-btn {
+  display: none;
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--ink-border-heavy);
+  background: var(--surface-glass);
+  color: var(--ink);
+  box-shadow: var(--card-specular);
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+
+.menu-toggle-btn:hover {
+  border-color: var(--klein-blue);
+}
+
+.menu-toggle-btn span {
+  position: absolute;
+  left: 13px;
+  right: 13px;
+  top: 50%;
+  height: 2px;
+  margin-top: -1px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform 0.3s var(--ease-smooth);
+}
+
+.menu-toggle-btn span:nth-child(1) {
+  transform: translate3d(0, -4px, 0);
+}
+
+.menu-toggle-btn span:nth-child(2) {
+  transform: translate3d(0, 4px, 0);
+}
+
+.menu-toggle-btn[aria-expanded="true"] span:nth-child(1) {
+  transform: rotate(45deg);
+}
+
+.menu-toggle-btn[aria-expanded="true"] span:nth-child(2) {
+  transform: rotate(-45deg);
+}
+
+body.dark-chapter .menu-toggle-btn:hover {
+  border-color: var(--acid-gold);
+}
+
+/* Full-screen navigation panel for tablet and phone widths */
+.mobile-menu {
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 18px 24px calc(28px + env(safe-area-inset-bottom, 0px));
+  background: var(--bg-primary);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate3d(0, -10px, 0);
+  transition:
+    opacity 0.26s var(--ease-smooth),
+    transform 0.32s var(--ease-smooth),
+    visibility 0s linear 0.32s;
+}
+
+.mobile-menu.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+  transition-delay: 0s;
+}
+
+html.menu-open {
+  overflow: hidden;
+}
+
+.mobile-menu-nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-menu-nav a {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  min-height: 54px;
+  padding: 13px 2px;
+  border-bottom: 1px solid var(--ink-border);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.45rem;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  opacity: 0;
+  transform: translate3d(0, 10px, 0);
+  transition:
+    opacity 0.3s var(--ease-smooth),
+    transform 0.4s var(--ease-smooth),
+    color 0.2s ease;
+}
+
+.mobile-menu.is-open .mobile-menu-nav a {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--i, 0) * 34ms + 60ms);
+}
+
+.mobile-menu-nav a:active {
+  color: var(--klein-blue);
+}
+
+.mobile-menu-nav .idx {
+  min-width: 26px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--klein-blue);
+}
+
+body.dark-chapter .mobile-menu-nav .idx,
+body.dark-chapter .mobile-menu-nav a:active {
+  color: var(--acid-gold);
+}
+
+.mobile-menu-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mobile-menu-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--ink-muted);
+}
+
+.mobile-menu-pills {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.mobile-menu-pills .dock-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  font-size: 0.75rem;
+  border: 1px solid var(--ink-border);
+  background: rgba(9, 10, 15, 0.035);
+}
+
+.mobile-menu-pills .dock-pill.active {
+  background: var(--klein-blue);
+  border-color: var(--klein-blue-light);
+}
+
+body.dark-chapter .mobile-menu-pills .dock-pill {
+  background: rgba(247, 248, 252, 0.04);
+}
+
+body.dark-chapter .mobile-menu-pills .dock-pill.active {
+  background: var(--acid-gold);
+  border-color: var(--acid-gold-light);
+  color: #06070B;
+}
+
+.mobile-menu-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: auto;
+}
+
+.mobile-menu-actions>* {
+  min-height: 48px;
+  justify-content: center;
+}
+
+.mobile-menu-actions .btn-action-primary {
+  grid-column: 1 / -1;
+  justify-content: space-between;
+}
+
+@media (min-width: 1025px) {
+  .mobile-menu {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .menu-toggle-btn {
+    display: inline-flex;
+  }
+
+  /* Audio and Roll move into the menu so the header can never overflow */
+  .nav-cta-zone .audio-toggle-btn,
+  .nav-cta-zone .roll-dice-header-btn {
+    display: none;
+  }
+
+  .nav-cta-zone .btn-header-cta {
+    min-height: 44px;
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .brand-cluster {
+    min-height: 44px;
+  }
+}
+
+/* 44px minimum for everything a finger has to hit */
+@media (max-width: 1024px),
+(pointer: coarse) {
+
+  .dock-pill,
+  .erp-tab-btn,
+  .curr-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  .tier-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  .audio-toggle-btn {
+    min-height: 44px;
+  }
+
+  .roll-dice-header-btn {
+    min-height: 48px;
+  }
+
+  .module-card-item {
+    min-height: 60px;
+    padding: 14px;
+  }
+
+  .module-card-item input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    margin-top: 1px;
+  }
+
+  .contact-meta a {
+    display: inline-block;
+    padding: 12px 0;
+  }
+}
+
+@media (max-width: 768px) {
+
+  /* Formation controls live in the menu on phones — the thumb zone stays clear */
+  .floating-mode-dock {
+    display: none;
+  }
+
+  footer {
+    padding-bottom: 56px;
+  }
+
+  .section-title .currency-switch-box {
+    display: flex;
+    width: fit-content;
+    margin: 14px 0 0;
+  }
+
+  .canvas-viewport-wrap {
+    aspect-ratio: 4 / 3;
+  }
+
+  .canvas-hud-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* No label smaller than 12px on a phone */
+  .hero-status-pill,
+  .metric-item .lbl,
+  .section-tag,
+  .about-badge,
+  .pod-tag,
+  .about-creds-strip span,
+  .mission-num,
+  .cap-face-code,
+  .erp-pill-badge,
+  .erp-tab-btn,
+  .telemetry-chip,
+  .mod-tag,
+  .module-card-item .mod-tag,
+  .module-card-item>div>span,
+  .canvas-hud-header,
+  .reel-btn .sub,
+  .case-num,
+  .case-stat-grid>div>span,
+  .curr-btn,
+  .tier-btn,
+  .summary-meta-row,
+  .form-group label,
+  .audio-toggle-btn,
+  .roll-dice-header-btn,
+  .btn-header-cta {
+    font-size: 0.75rem;
+  }
+
+  .hero-status-pill {
+    letter-spacing: 0.06em;
+    line-height: 1.45;
+    border-radius: var(--radius-md);
+  }
+}
+
+@media (max-width: 480px) {
+
+  /* At phone widths CONTACT is the first action inside the menu */
+  .nav-cta-zone .btn-header-cta {
+    display: none;
+  }
+
+  .top-rail {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* =========================================================================
+   20. MOBILE SHELL & SWIPE LAYOUTS (PHONE / TABLET)
+   ========================================================================= */
+
+/* Thumb-zone action bar — hidden on desktop, where the header CTA is in view */
+.mobile-action-bar {
+  display: none;
+}
+
+.top-rail {
+  transition:
+    transform 0.34s var(--ease-smooth),
+    background 0.35s ease,
+    border-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+@media (max-width: 1024px) {
+  .top-rail.is-hidden {
+    transform: translate3d(0, -105%, 0);
+  }
+
+  .mobile-action-bar {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    z-index: 990;
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--ink-border-heavy);
+    background: var(--bg-glass-heavy);
+    backdrop-filter: blur(18px) saturate(170%);
+    box-shadow: var(--card-shadow-lg), var(--card-specular);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate3d(0, 120%, 0);
+    transition:
+      transform 0.42s var(--ease-smooth),
+      opacity 0.3s ease,
+      visibility 0s linear 0.42s;
+  }
+
+  .mobile-action-bar.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  html.menu-open .mobile-action-bar {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .mobile-action-bar .btn-action-primary {
+    flex: 1;
+    min-width: 0;
+    min-height: 48px;
+    justify-content: space-between;
+    padding: 12px 14px;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    box-shadow: none;
+  }
+
+  .mobile-action-bar .btn-action-primary::before {
+    animation: none;
+  }
+
+  /* Formation switch: one tap steps the die to its next formation. It sits in
+     the corner of the hero stage and, further down, in the action bar. */
+  .formation-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+    padding: 0 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--ink-border-heavy);
+    background: transparent;
+    font-family: var(--font-mono);
+    color: var(--ink);
+    text-align: left;
+    transition: border-color 0.25s ease, transform 0.2s var(--ease-smooth);
+  }
+
+  .formation-switch-icon {
+    flex-shrink: 0;
+    width: 13px;
+    height: 13px;
+    border: 2px solid var(--klein-blue);
+    border-radius: 3px;
+    box-shadow: 0 0 10px var(--klein-glow);
+    transition: transform 0.55s var(--ease-spring);
+  }
+
+  .formation-switch-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
+  .formation-switch-text .k {
+    color: var(--ink-muted);
+    font-weight: 400;
+  }
+
+  .formation-switch-text .v {
+    font-weight: 700;
+  }
+
+  body.dark-chapter .formation-switch-icon {
+    border-color: var(--acid-gold);
+    box-shadow: 0 0 10px var(--acid-gold-glow);
+  }
+
+  .formation-switch:active,
+  .mobile-action-bar .btn-action-primary:active {
+    transform: scale(0.97);
+  }
+
+  /* In the hero stage the switch floats in the lower corner, on glass */
+  .stage-slot--hero {
+    position: relative;
+  }
+
+  .stage-slot--hero .formation-switch {
+    position: absolute;
+    right: 0;
+    bottom: 4px;
+    pointer-events: auto;
+    background: var(--bg-glass-heavy);
+    backdrop-filter: blur(14px) saturate(165%);
+    box-shadow: var(--card-shadow-sm), var(--card-specular);
+  }
+
+  html.motion-ok .stage-slot--hero .formation-switch {
+    animation: arrive-rise 0.8s var(--ease-out-expo) 1.1s backwards;
+  }
+
+  html.motion-calm .stage-slot--hero .formation-switch {
+    animation-name: arrive-fade;
+    animation-duration: 0.6s;
+  }
+
+  /* Formation controls live in the action bar and the menu at these widths */
+  .floating-mode-dock,
+  .dice-telemetry-badge {
+    display: none;
+  }
+
+  footer {
+    padding-bottom: calc(104px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Cards are frosted glass: the die glows through them without touching the
+     text. A lighter blur than desktop keeps scrolling smooth on a phone. */
+  .hero-manifesto-card,
+  .metric-item,
+  .about-card,
+  .mission-card,
+  .cap-card-row,
+  .erp-card,
+  .case-card {
+    backdrop-filter: blur(14px) saturate(165%);
+  }
+
+  /* Headings and running text sit straight on the backdrop, so they carry a
+     soft halo in the page colour and stay crisp when the die passes behind */
+  .hero-headline,
+  .hero-subhead,
+  .section-title,
+  .section-subtext,
+  .contact-meta {
+    text-shadow: 0 0 14px var(--bg-primary), 0 0 4px var(--bg-primary);
+  }
+
+  /* Gradient-filled words are transparent glyphs: a shadow would show through them */
+  .serif-em {
+    text-shadow: none;
+  }
+}
+
+/* Low-power devices get solid cards instead of live blur */
+html[data-tier="0"] .hero-manifesto-card,
+html[data-tier="0"] .metric-item,
+html[data-tier="0"] .about-card,
+html[data-tier="0"] .mission-card,
+html[data-tier="0"] .cap-card-row,
+html[data-tier="0"] .erp-card,
+html[data-tier="0"] .case-card,
+html[data-tier="1"] .hero-manifesto-card,
+html[data-tier="1"] .metric-item,
+html[data-tier="1"] .about-card,
+html[data-tier="1"] .mission-card,
+html[data-tier="1"] .cap-card-row,
+html[data-tier="1"] .erp-card,
+html[data-tier="1"] .case-card {
+  backdrop-filter: none;
+  background: var(--surface-card);
+}
+
+@media (max-width: 768px) {
+
+  /* --- Hero: one composed first screen — status, die stage, headline, sub-head.
+     The card with the two buttons and the four metrics follow on scroll. */
+  .hero-section {
+    min-height: 0;
+    align-content: start;
+    padding-top: calc(var(--header-height) + 12px);
+    padding-bottom: 56px;
+  }
+
+  .hero-status-pill {
+    margin-bottom: 2px;
+  }
+
+  .hero-headline {
+    margin-bottom: 14px;
+  }
+
+  .hero-subhead {
+    margin-bottom: 28px;
+  }
+
+  .hero-lower-deck {
+    max-width: none;
+    gap: 12px;
+  }
+
+  .hero-manifesto-card {
+    padding: 24px 22px;
+  }
+
+  .metric-item {
+    padding: 16px 14px 14px;
+  }
+
+  /* --- Every deck is a clean full-width stack ----------------------------- */
+  .about-cards-deck {
+    gap: 14px;
+  }
+
+  .about-card,
+  .mission-card {
+    padding: 24px 22px;
+  }
+
+  .mission-grid,
+  .erp-cards-deck {
+    gap: 14px;
+  }
+
+  .capabilities-list-grid {
+    gap: 12px;
+  }
+
+  .cap-card-row {
+    align-content: start;
+    padding: 20px 20px 22px;
+  }
+
+  .case-card {
+    min-height: 0;
+  }
+
+  /* --- ERP console tabs snap into place ---------------------------------- */
+  .erp-tabs {
+    scroll-snap-type: x proximity;
+    margin-right: -30px;
+    padding-right: 30px;
+  }
+
+  .erp-tab-btn {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+  }
+
+  .erp-interactive-console {
+    padding: 22px 20px;
+  }
+
+  /* --- Press feedback replaces hover on touch ---------------------------- */
+  .btn-action-primary:active,
+  .btn-action-secondary:active,
+  .whatsapp-quick-btn:active,
+  .reel-btn:active,
+  .tier-btn:active,
+  .erp-tab-btn:active,
+  .module-card-item:active {
+    transform: scale(0.98);
+  }
+
+  a,
+  button,
+  label {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .section-wrap {
+    padding-top: 72px;
+    padding-bottom: 72px;
+  }
+
+  .section-header-left,
+  .section-header-right {
+    margin-bottom: 28px;
+  }
+}
+
+@media (max-width: 640px) {
+
+  /* Credentials stay a compact 2 × 2 instead of four full rows */
+  .about-creds-strip {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 16px;
+    padding: 20px;
+  }
+
+  .about-creds-strip>div {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  /* The four metrics read as one 2 × 2 block */
+  .hero-metrics-deck {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+/* Without JavaScript the motion mode is never decided (see lib/motion.js), so
+   the plain system preference applies. With it, calm mode above takes over. */
 @media (prefers-reduced-motion: reduce) {
 
-  *,
-  *::before,
-  *::after {
+  html:not(.motion-ok) *,
+  html:not(.motion-ok) *::before,
+  html:not(.motion-ok) *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

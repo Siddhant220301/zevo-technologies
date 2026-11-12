@@ -2,90 +2,99 @@
 
 import { useEffect, useRef } from "react";
 
+const INTERACTIVE =
+  "a, button, input, select, textarea, label, .interactive-zone, .tilt-card, .cap-card-row, .dock-pill";
+const NATIVE_CARET = "input:not([type='checkbox']):not([type='radio']), textarea";
+const DRAG_LABELS = new Set(["DRAG", "ROLL 3D", "ROLL", "ROTATE"]);
+const EXPLORE_LABELS = new Set(["EXPLORE", "ABOUT"]);
+const MODES = ["mode-drag", "mode-explore", "mode-lock"];
+const FRAME_MS = 1000 / 60;
+
 export default function CustomCursor() {
   const dotRef = useRef(null);
   const ringRef = useRef(null);
   const textRef = useRef(null);
 
   useEffect(() => {
+    // Touch devices have no cursor to replace
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return undefined;
+
+    const dot = dotRef.current;
+    const ring = ringRef.current;
+    const text = textRef.current;
+    if (!dot || !ring || !text) return undefined;
+
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
     let ringX = mouseX;
     let ringY = mouseY;
-    let animId;
+    let last = performance.now();
+    let animId = 0;
+    let current = null;
 
     const onMouseMove = (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
     };
 
-    window.addEventListener("mousemove", onMouseMove, { passive: true });
-
-    const animate = () => {
-      if (dotRef.current && ringRef.current) {
-        dotRef.current.style.left = `${mouseX}px`;
-        dotRef.current.style.top = `${mouseY}px`;
-
-        ringX += (mouseX - ringX) * 0.18;
-        ringY += (mouseY - ringY) * 0.18;
-
-        ringRef.current.style.left = `${ringX.toFixed(2)}px`;
-        ringRef.current.style.top = `${ringY.toFixed(2)}px`;
-      }
+    const animate = (now) => {
+      const f = Math.min((now - last) / FRAME_MS, 3);
+      last = now;
+      const k = 1 - Math.pow(1 - 0.18, f);
+      ringX += (mouseX - ringX) * k;
+      ringY += (mouseY - ringY) * k;
+      // Transforms only: no layout work per frame
+      dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+      ring.style.transform = `translate3d(${ringX.toFixed(2)}px, ${ringY.toFixed(2)}px, 0) translate(-50%, -50%)`;
       animId = requestAnimationFrame(animate);
     };
     animId = requestAnimationFrame(animate);
 
-    const updateHoverListeners = () => {
-      const interactives = document.querySelectorAll(
-        "a, button, input, select, textarea, label, .interactive-zone, .tilt-card, .cap-card-row, .dock-pill"
-      );
-
-      interactives.forEach((el) => {
-        el.onmouseenter = () => {
-          if (ringRef.current) ringRef.current.classList.add("hover-active");
-          if (dotRef.current) dotRef.current.classList.add("hover-active");
-          const customCursor = el.getAttribute("data-cursor");
-          if (customCursor && textRef.current && ringRef.current) {
-            textRef.current.textContent = customCursor;
-            ringRef.current.classList.add("has-label");
-            ringRef.current.classList.remove("mode-drag", "mode-explore", "mode-lock");
-            if (customCursor === "DRAG" || customCursor === "ROLL 3D" || customCursor === "ROLL" || customCursor === "ROTATE") {
-              ringRef.current.classList.add("mode-drag");
-            }
-            if (customCursor === "EXPLORE" || customCursor === "ABOUT") {
-              ringRef.current.classList.add("mode-explore");
-            }
-            if (customCursor === "LOCK") {
-              ringRef.current.classList.add("mode-lock");
-            }
-          }
-        };
-
-        el.onmouseleave = () => {
-          if (ringRef.current) {
-            ringRef.current.classList.remove(
-              "hover-active",
-              "has-label",
-              "mode-drag",
-              "mode-explore",
-              "mode-lock"
-            );
-          }
-          if (dotRef.current) dotRef.current.classList.remove("hover-active");
-          if (textRef.current) textRef.current.textContent = "";
-        };
-      });
+    const clear = () => {
+      current = null;
+      ring.classList.remove("hover-active", "has-label", "is-native", ...MODES);
+      dot.classList.remove("hover-active", "is-native");
+      text.textContent = "";
     };
 
-    updateHoverListeners();
-    const observer = new MutationObserver(updateHoverListeners);
-    observer.observe(document.body, { childList: true, subtree: true });
+    // One delegated listener instead of a handler on every element, so nothing
+    // here can overwrite another component's handlers
+    const onOver = (e) => {
+      const el = e.target instanceof Element ? e.target.closest(INTERACTIVE) : null;
+      if (el === current) return;
+      if (!el) {
+        clear();
+        return;
+      }
+      current = el;
+
+      const native = el.matches(NATIVE_CARET);
+      ring.classList.toggle("is-native", native);
+      dot.classList.toggle("is-native", native);
+      ring.classList.add("hover-active");
+      dot.classList.add("hover-active");
+      ring.classList.remove("has-label", ...MODES);
+      text.textContent = "";
+
+      const label = el.getAttribute("data-cursor");
+      if (label) {
+        text.textContent = label;
+        ring.classList.add("has-label");
+        if (DRAG_LABELS.has(label)) ring.classList.add("mode-drag");
+        if (EXPLORE_LABELS.has(label)) ring.classList.add("mode-explore");
+        if (label === "LOCK") ring.classList.add("mode-lock");
+      }
+    };
+
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
+    document.addEventListener("mouseover", onOver, { passive: true });
+    document.documentElement.addEventListener("mouseleave", clear);
 
     return () => {
-      window.removeEventListener("mousemove", onMouseMove);
       cancelAnimationFrame(animId);
-      observer.disconnect();
+      window.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseover", onOver);
+      document.documentElement.removeEventListener("mouseleave", clear);
     };
   }, []);
 

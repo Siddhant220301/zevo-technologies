@@ -4,8 +4,9 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import sound from "@/utils/audio";
+import FormationSwitch from "@/components/FormationSwitch";
 
-export default function HeroSection() {
+export default function HeroSection({ activeFormation, onFormationChange }) {
   const m1Ref = useRef(null);
   const m3Ref = useRef(null);
   const deckRef = useRef(null);
@@ -52,10 +53,19 @@ export default function HeroSection() {
         <span>FULL-SERVICE ENGINEERING &amp; PRODUCT STUDIO // ACCEPTING SELECT NEW PROJECTS</span>
       </div>
 
+      {/* Phones only: reserved space where the 3D die sits above the headline,
+          with the one-tap formation switch in its corner */}
+      <div className="stage-slot stage-slot--hero">
+        <FormationSwitch activeFormation={activeFormation} onFormationChange={onFormationChange} />
+      </div>
+
+      {/* Each line is its own block so it can rise in on its own with plain CSS */}
       <h1 className="hero-headline">
-        We build custom web apps, <br />
-        <span className="serif-em">interactive digital platforms</span> <br />
-        &amp; business tools.
+        <span className="hl-line">We build custom web apps,</span>{" "}
+        <span className="hl-line">
+          <span className="serif-em">interactive digital platforms</span>
+        </span>{" "}
+        <span className="hl-line">&amp; business tools.</span>
       </h1>
 
       <p className="hero-subhead">

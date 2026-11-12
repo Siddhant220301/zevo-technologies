@@ -2,7 +2,7 @@ export default function CaseStudiesSection() {
   return (
     <section className="section-wrap content-grid" id="cases">
       <div className="section-header-left">
-        <span className="section-tag">// 06 — CLIENT WORK</span>
+        <span className="section-tag">{"// 06 — CLIENT WORK"}</span>
         <h2 className="section-title">
           Practical results for <em>growing</em> businesses.
         </h2>
@@ -11,6 +11,9 @@ export default function CaseStudiesSection() {
           lifestyle brands, and healthcare practices.
         </p>
       </div>
+
+      {/* Reserved space where the 3D die sits beside the heading */}
+      <div className="stage-slot" aria-hidden="true" />
 
       <div className="cases-row-deck interactive-zone">
         <article className="case-card case-01 tilt-card" data-cursor="CASE 01">

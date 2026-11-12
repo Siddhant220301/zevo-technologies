@@ -50,7 +50,7 @@ export default function ErpSection({ onSelectFace }) {
   return (
     <section className="section-wrap content-grid" id="erp">
       <div className="section-header-left">
-        <span className="section-tag">// 04 — ENTERPRISE BACKBONE</span>
+        <span className="section-tag">{"// 04 — ENTERPRISE BACKBONE"}</span>
         <h2 className="section-title">
           Replace rigid software with a system you <em>own</em>.
         </h2>

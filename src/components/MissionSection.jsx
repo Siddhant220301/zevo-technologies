@@ -2,7 +2,7 @@ export default function MissionSection() {
   return (
     <section className="section-wrap content-grid" id="mission">
       <div className="section-header-right">
-        <span className="section-tag">// 02 — VISION &amp; MISSION</span>
+        <span className="section-tag">{"// 02 — VISION & MISSION"}</span>
         <h2 className="section-title">
           Empowering businesses with software they <em>truly own</em>.
         </h2>

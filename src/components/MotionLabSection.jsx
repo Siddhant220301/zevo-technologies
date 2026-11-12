@@ -255,7 +255,7 @@ export default function MotionLabSection() {
   return (
     <section className="section-wrap content-grid" id="motion">
       <div className="motion-left-col">
-        <span className="section-tag">// 05 — MOTION LAB</span>
+        <span className="section-tag">{"// 05 — MOTION LAB"}</span>
         <h2 className="section-title">
           Visuals and motion that make your products <em>stand out</em>.
         </h2>
@@ -263,6 +263,8 @@ export default function MotionLabSection() {
           We design interactive web components and kinetic motion graphics that help modern brands showcase
           products in detail and captivate visitors.
         </p>
+        {/* Reserved space where the 3D die sits under the copy */}
+        <div className="stage-slot" aria-hidden="true" />
       </div>
 
       <div className="motion-right-col interactive-zone">

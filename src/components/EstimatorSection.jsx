@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import sound from "@/utils/audio";
 
 const moduleData = {
@@ -31,6 +31,18 @@ export default function EstimatorSection({ onSelectFace, onRandomizeSpec }) {
   });
 
   const activeTier = scopeTiers.find((t) => t.id === activeTierId) || scopeTiers[1];
+
+  // Tell the 3D stage which modules are selected so their cubes can dock
+  useEffect(() => {
+    const detail = {
+      faces: Object.keys(selectedModules)
+        .filter((k) => selectedModules[k])
+        .map((k) => moduleData[k].face),
+      tier: activeTierId,
+    };
+    window.__zevoModules = detail;
+    window.dispatchEvent(new CustomEvent("zevo:modules", { detail }));
+  }, [selectedModules, activeTierId]);
 
   const handleCurrToggle = (newCurr) => {
     sound.playClick(900);
@@ -130,7 +142,7 @@ export default function EstimatorSection({ onSelectFace, onRandomizeSpec }) {
   return (
     <section className="section-wrap content-grid" id="estimator">
       <div className="section-header-left">
-        <span className="section-tag">// 07 — TRANSPARENT ESTIMATION</span>
+        <span className="section-tag">{"// 07 — TRANSPARENT ESTIMATION"}</span>
         <h2 className="section-title">
           Estimate your <em>project</em>.
           <span className="currency-switch-box">
@@ -259,10 +271,13 @@ export default function EstimatorSection({ onSelectFace, onRandomizeSpec }) {
         </div>
       </div>
 
+      {/* Empty window the 3D die rides in while this section is on screen */}
+      <div className="est-stage-window" aria-hidden="true" />
+
       <div className="est-spatial-companion interactive-zone tilt-card">
         <div>
           <span className="section-tag" style={{ color: "var(--klein-blue)" }}>
-            // INTERACTIVE STAGE CO-PILOT
+            {"// INTERACTIVE STAGE CO-PILOT"}
           </span>
           <h3>Die Responds To Your Stack</h3>
           <p>

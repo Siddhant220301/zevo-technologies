@@ -1,10 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import sound from "@/utils/audio";
+import MobileMenu from "@/components/MobileMenu";
 
-export default function TopRail({ onRollDice }) {
+export default function TopRail({ onRollDice, activeFormation, wireframeActive, onFormationChange }) {
   const [audioActive, setAudioActive] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+  const railRef = useRef(null);
+
+  // On phones and tablets the bar slides away while reading and returns on scroll-up
+  useEffect(() => {
+    const compact = window.matchMedia("(max-width: 1024px)");
+    let lastY = window.scrollY;
+    let frame = 0;
+
+    const update = () => {
+      frame = 0;
+      const rail = railRef.current;
+      if (!rail) return;
+      const y = window.scrollY;
+      const open = document.documentElement.classList.contains("menu-open");
+      const hide = compact.matches && !open && y > 160 && y > lastY + 4;
+      const show = !compact.matches || open || y < lastY - 4 || y <= 160;
+      if (hide) rail.classList.add("is-hidden");
+      else if (show) rail.classList.remove("is-hidden");
+      lastY = y;
+    };
+
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
 
   const handleAudioToggle = () => {
     const active = sound.toggle();
@@ -21,7 +54,8 @@ export default function TopRail({ onRollDice }) {
   };
 
   return (
-    <header className="top-rail">
+    <>
+    <header className="top-rail" ref={railRef}>
       <a
         href="#hero"
         className="brand-cluster"
@@ -73,7 +107,7 @@ export default function TopRail({ onRollDice }) {
         </li>
       </ul>
 
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+      <div className="nav-cta-zone">
         <button
           type="button"
           className={`audio-toggle-btn ${audioActive ? "active" : ""}`}
@@ -105,7 +139,33 @@ export default function TopRail({ onRollDice }) {
         >
           CONTACT //
         </a>
+
+        <button
+          type="button"
+          className="menu-toggle-btn"
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          aria-controls="mobileMenu"
+          onClick={() => {
+            sound.playClick(900);
+            setMenuOpen((v) => !v);
+          }}
+        >
+          <span />
+          <span />
+        </button>
       </div>
     </header>
+    <MobileMenu
+      open={menuOpen}
+      onClose={closeMenu}
+      audioActive={audioActive}
+      onAudioToggle={handleAudioToggle}
+      onRollDice={handleRollClick}
+      activeFormation={activeFormation}
+      wireframeActive={wireframeActive}
+      onFormationChange={onFormationChange}
+    />
+    </>
   );
 }

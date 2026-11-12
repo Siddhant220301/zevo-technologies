@@ -31,7 +31,7 @@ export default function ContactSection() {
   return (
     <section className="section-wrap content-grid" id="contact">
       <div className="contact-info-col">
-        <span className="section-tag">// 08 — GET IN TOUCH</span>
+        <span className="section-tag">{"// 08 — GET IN TOUCH"}</span>
         <h2 className="section-title">
           Let&apos;s discuss your <em>project</em>.
         </h2>

@@ -1,31 +1,27 @@
+const ITEMS = [
+  "CUSTOM OPERATIONS TOOLS",
+  "INTERACTIVE DIGITAL EXPERIENCES",
+  "FAST NEXT.JS WEB APPLICATIONS",
+  "WHATSAPP & WORKFLOW AUTOMATIONS",
+  "GST INVOICING & E-WAY BILLS",
+  "100% CLIENT SOURCE CODE OWNERSHIP",
+  "ZERO RECURRING SEAT FEES",
+];
+
+// Seamless ticker: the full list is rendered twice, so the -50% shift in the
+// marquee-drift keyframes lands exactly on the seam and the loop never jumps.
 export default function EnterpriseMarquee() {
   return (
     <div className="enterprise-marquee-wrap">
       <div className="marquee-track">
-        <span>CUSTOM OPERATIONS TOOLS</span>
-        <span className="bullet">///</span>
-        <span>INTERACTIVE DIGITAL EXPERIENCES</span>
-        <span className="bullet">///</span>
-        <span>FAST NEXT.JS WEB APPLICATIONS</span>
-        <span className="bullet">///</span>
-        <span>WHATSAPP &amp; WORKFLOW AUTOMATIONS</span>
-        <span className="bullet">///</span>
-        <span>GST INVOICING &amp; E-WAY BILLS</span>
-        <span className="bullet">///</span>
-        <span>100% CLIENT SOURCE CODE OWNERSHIP</span>
-        <span className="bullet">///</span>
-        <span>ZERO RECURRING SEAT FEES</span>
-        <span className="bullet">///</span>
-        <span>CUSTOM OPERATIONS TOOLS</span>
-        <span className="bullet">///</span>
-        <span>INTERACTIVE DIGITAL EXPERIENCES</span>
-        <span className="bullet">///</span>
-        <span>FAST NEXT.JS WEB APPLICATIONS</span>
-        <span className="bullet">///</span>
-        <span>WHATSAPP &amp; WORKFLOW AUTOMATIONS</span>
-        <span className="bullet">///</span>
-        <span>GST INVOICING &amp; E-WAY BILLS</span>
-        <span className="bullet">///</span>
+        {[0, 1].map((copy) =>
+          ITEMS.map((item) => (
+            <span key={`${copy}-${item}`} className="marquee-item" aria-hidden={copy === 1}>
+              <span>{item}</span>
+              <span className="bullet">{"///"}</span>
+            </span>
+          ))
+        )}
       </div>
     </div>
   );
