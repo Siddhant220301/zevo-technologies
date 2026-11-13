@@ -6,7 +6,7 @@ import CustomCursor from "@/components/CustomCursor";
 import SmoothScroll from "@/components/SmoothScroll";
 import MotionDirector from "@/components/MotionDirector";
 import TopRail from "@/components/TopRail";
-import FloatingModeDock from "@/components/FloatingModeDock";
+import SectorReadout from "@/components/SectorReadout";
 import HeroSection from "@/components/HeroSection";
 import CapabilitiesSection from "@/components/CapabilitiesSection";
 import ErpSection from "@/components/ErpSection";
@@ -29,8 +29,6 @@ export default function HomeClient({ marquee, about, mission, cases }) {
   const stageRef = useRef(null);
   const [stageReady, setStageReady] = useState(false);
   const [activeSector, setActiveSector] = useState("01 // CUSTOM ERP CORE");
-  const [activeFormation, setActiveFormation] = useState("dice");
-  const [wireframeActive, setWireframeActive] = useState(false);
 
   const handleReadoutChange = useCallback((label) => {
     setActiveSector(label);
@@ -44,35 +42,29 @@ export default function HomeClient({ marquee, about, mission, cases }) {
     if (stageRef.current && stageRef.current.rollToFace) stageRef.current.rollToFace(faceIdx);
   };
 
-  // Formation state lives here so the desktop dock and the mobile menu stay in sync
-  const handleFormationChange = (mode) => {
-    const setFormation = stageRef.current?.setFormation;
-    if (mode === "wireframe") {
-      const nextWire = !wireframeActive;
-      setWireframeActive(nextWire);
-      if (setFormation) setFormation("wireframe", nextWire);
-      return;
-    }
-    setActiveFormation(mode);
-    if (setFormation) setFormation(mode, wireframeActive);
-  };
-
-  // The 3D stage is the heaviest work on the page. It starts once the hero's
-  // arrival has played on a free main thread, the next time the browser is idle.
+  // The 3D stage is the heaviest work on the page. Its code is fetched straight
+  // away; the stage itself starts once the headline has risen into place
+  // (its last line is 98% home by then), the next time the browser is idle.
   useEffect(() => {
     // CSS reads the device tier to decide between live glass and solid cards
-    document.documentElement.dataset.tier = String(getDeviceProfile().tier);
+    const { tier } = getDeviceProfile();
+    document.documentElement.dataset.tier = String(tier);
+    // Tier 0 = no WebGL: the page shows without the 3D stage
+    if (tier === 0) return undefined;
+
+    // Download and prepare the 3D code while the hero arrives
+    import("@/components/WebGLStage").catch(() => {});
 
     let idleId = 0;
     const start = () => setStageReady(true);
-    const arrivalMs = getMotionMode() === "calm" ? 650 : 1450;
+    const startAtMs = getMotionMode() === "calm" ? 300 : 900;
     const timer = window.setTimeout(() => {
       if ("requestIdleCallback" in window) {
-        idleId = window.requestIdleCallback(start, { timeout: 600 });
+        idleId = window.requestIdleCallback(start, { timeout: 200 });
       } else {
         start();
       }
-    }, Math.max(0, arrivalMs - performance.now()));
+    }, Math.max(0, startAtMs - performance.now()));
     return () => {
       window.clearTimeout(timer);
       if (idleId) window.cancelIdleCallback(idleId);
@@ -85,20 +77,10 @@ export default function HomeClient({ marquee, about, mission, cases }) {
       <MotionDirector />
       <CustomCursor />
       {stageReady && <WebGLStage stageRef={stageRef} onReadoutChange={handleReadoutChange} />}
-      <TopRail
-        onRollDice={handleRollDice}
-        activeFormation={activeFormation}
-        wireframeActive={wireframeActive}
-        onFormationChange={handleFormationChange}
-      />
-      <FloatingModeDock
-        onFormationChange={handleFormationChange}
-        activeFormation={activeFormation}
-        wireframeActive={wireframeActive}
-        activeSector={activeSector}
-      />
+      <TopRail onRollDice={handleRollDice} />
+      <SectorReadout activeSector={activeSector} />
       <main>
-        <HeroSection activeFormation={activeFormation} onFormationChange={handleFormationChange} />
+        <HeroSection />
         {marquee}
         {about}
         {mission}
@@ -112,7 +94,7 @@ export default function HomeClient({ marquee, about, mission, cases }) {
         <div id="closing-stage" className="stage-slot stage-slot--closing" aria-hidden="true" />
       </main>
       <Footer />
-      <MobileActionBar activeFormation={activeFormation} onFormationChange={handleFormationChange} />
+      <MobileActionBar />
       <TiltCardInitializer />
     </>
   );

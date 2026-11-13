@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 const INTERACTIVE =
-  "a, button, input, select, textarea, label, .interactive-zone, .tilt-card, .cap-card-row, .dock-pill";
+  "a, button, input, select, textarea, label, .interactive-zone, .tilt-card, .cap-card-row";
 const NATIVE_CARET = "input:not([type='checkbox']):not([type='radio']), textarea";
 const DRAG_LABELS = new Set(["DRAG", "ROLL 3D", "ROLL", "ROTATE"]);
 const EXPLORE_LABELS = new Set(["EXPLORE", "ABOUT"]);

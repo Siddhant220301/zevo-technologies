@@ -5,8 +5,8 @@ import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
-import sound from "@/utils/audio";
 import { getDeviceProfile } from "@/lib/device";
+import { pickVisitFormation } from "@/lib/formation";
 
 export const faceRotations = [
   { x: 0, y: -Math.PI / 2, label: "01 // CUSTOM OPERATIONS & ERP" },
@@ -65,12 +65,19 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
     // World units visible from top to bottom of the canvas at z = 0
     const VIEW_HEIGHT = 2 * 13 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
 
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      antialias: true,
-      alpha: true,
-      powerPreference: "high-performance",
-    });
+    // If the browser cannot start WebGL the page simply shows without the 3D
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance",
+      });
+    } catch {
+      canvas.style.display = "none";
+      return undefined;
+    }
     renderer.setSize(cachedW, cachedH);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, profile.maxDpr));
     // Neutral tone mapping keeps Klein blue and vermilion true to the CSS tokens
@@ -442,32 +449,6 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
       return Math.min(1, u / 1.3) * Math.min(1, (HELIX_STEPS - u) / 1.3);
     };
 
-    // Rungs: thin glowing rods joining each base pair, so the two strands read
-    // as DNA at a glance. They exist only in this formation and fade in and
-    // out with it; at the strand ends they shrink with their cubes.
-    const rungGeo = new THREE.CylinderGeometry(0.032, 0.032, 1, 6, 1, true);
-    const rungMat = new THREE.MeshStandardMaterial({
-      color: 0x1e3aff,
-      emissive: 0x1e3aff,
-      emissiveIntensity: 0.55,
-      roughness: 0.35,
-      metalness: 0.2,
-      transparent: true,
-      opacity: 0,
-      depthWrite: false,
-    });
-    const rungs = [];
-    for (let k = 0; k < HELIX_STEPS; k++) {
-      const rod = new THREE.Mesh(rungGeo, rungMat);
-      rod.visible = false;
-      cluster.add(rod);
-      rungs.push(rod);
-    }
-    const rungA = new THREE.Vector3();
-    const rungB = new THREE.Vector3();
-    const rungDir = new THREE.Vector3();
-    let rungOpacity = 0;
-
     // --- 04 SATURN RINGS --------------------------------------------------
     const RINGS = [
       { start: 0, count: 7, radius: 2.75, speed: 0.46 },
@@ -493,17 +474,10 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
       helix: { extent: { w: 5.1, h: 8.4 }, dieScale: 0.74, cubeScale: 0.85, float: 0.2, aligned: true, die: "spindle", place: placeHelix },
       saturn: { extent: { w: 8.7, h: 5.0 }, dieScale: 1, cubeScale: 0.8, float: 0.15, aligned: true, die: "planet", place: placeRing },
     };
-    const FORMATION_ALIASES = {
-      dice: "dice",
-      grid: "grid",
-      explode: "grid",
-      ring: "helix",
-      helix: "helix",
-      saturn: "saturn",
-    };
-
-    let formationKey = "dice";
-    let formation = FORMATIONS.dice;
+    // Each visit shows the next formation in turn (see lib/formation.js)
+    const visitFormation = pickVisitFormation();
+    const formationKey = FORMATIONS[visitFormation] ? visitFormation : "dice";
+    const formation = FORMATIONS[formationKey];
 
     const scratchPos = new THREE.Vector3();
     const scratchVec = new THREE.Vector3();
@@ -523,20 +497,6 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
       u.anchor.copy(u.from);
       cube.position.copy(u.anchor);
     });
-
-    function startFormation(key) {
-      const next = FORMATIONS[key];
-      if (!next || key === formationKey) return;
-      formationKey = key;
-      formation = next;
-      const now = performance.now();
-      subCubes.forEach((cube, i) => {
-        const u = cube.userData;
-        u.from.copy(u.anchor);
-        u.transStart = now + i * 14;
-        u.transDur = TRANSITION_MS;
-      });
-    }
 
     /* =========================================================================
        5. ESTIMATOR LINK — cubes belonging to selected modules grow and glow
@@ -831,7 +791,6 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
     // turns and hops, like a real roll, before settling.
     function rollMainDieToFace(faceIndex, opts = {}) {
       const tumble = Boolean(opts.tumble);
-      if (!opts.silent) sound.playClick(1100);
       currentFaceIndex = faceIndex % faceRotations.length;
       const targetQuat = faceQuats[currentFaceIndex];
       const startQuat = mainDie.getWorldQuaternion(new THREE.Quaternion());
@@ -889,8 +848,7 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
           best = i;
         }
       });
-      sound.playClick(320);
-      rollMainDieToFace(best, { silent: true });
+      rollMainDieToFace(best);
     }
 
     // Flash every cube in a quick wave
@@ -913,9 +871,8 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
     }
 
     function rollRandom() {
-      sound.playRoll();
       rippleCubes(1.1, 6);
-      rollMainDieToFace(Math.floor(Math.random() * 6), { tumble: true, silent: true });
+      rollMainDieToFace(Math.floor(Math.random() * 6), { tumble: true });
     }
 
     function updateDie(f, now, dt) {
@@ -1049,39 +1006,6 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
       }
     }
 
-    function updateRungs(f) {
-      rungOpacity += ((formationKey === "helix" ? 0.62 : 0) - rungOpacity) * ease(0.06, f);
-      const show = rungOpacity > 0.01;
-      if (!show) {
-        if (rungs[0].visible) rungs.forEach((rod) => (rod.visible = false));
-        return;
-      }
-      rungMat.opacity = rungOpacity;
-      const dark = document.body.classList.contains("dark-chapter");
-      rungMat.color.set(dark ? 0xd4ff00 : 0x1e3aff);
-      rungMat.emissive.set(dark ? 0xd4ff00 : 0x1e3aff);
-
-      for (let k = 0; k < rungs.length; k++) {
-        const rod = rungs[k];
-        const a = subCubes[2 * k];
-        const b = subCubes[2 * k + 1];
-        // Shrinks with its cubes at the strand ends; stops short of the cube faces
-        const grow = clamp(Math.min(a.scale.x, b.scale.x) / Math.max(formation.cubeScale, 0.001), 0, 1);
-        rungA.copy(a.position);
-        rungB.copy(b.position);
-        rungDir.subVectors(rungB, rungA);
-        const length = rungDir.length() * 0.84 * grow;
-        if (length < 0.02) {
-          rod.visible = false;
-          continue;
-        }
-        rod.visible = true;
-        rod.position.addVectors(rungA, rungB).multiplyScalar(0.5);
-        rod.quaternion.setFromUnitVectors(Y_AXIS, rungDir.normalize());
-        rod.scale.set(1, length, 1);
-      }
-    }
-
     /* =========================================================================
        8. SHADOW AND LIVE FACE
        ========================================================================= */
@@ -1188,42 +1112,19 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
       endTrigger: "#estimator",
       start: "top 50%",
       end: "top 50%",
-      onEnter: () => {
-        updateChapterTheme(true);
-        sound.playClick(580);
-      },
-      onLeave: () => {
-        updateChapterTheme(false);
-        sound.playClick(820);
-      },
-      onEnterBack: () => {
-        updateChapterTheme(true);
-        sound.playClick(580);
-      },
-      onLeaveBack: () => {
-        updateChapterTheme(false);
-        sound.playClick(820);
-      },
+      onEnter: () => updateChapterTheme(true),
+      onLeave: () => updateChapterTheme(false),
+      onEnterBack: () => updateChapterTheme(true),
+      onLeaveBack: () => updateChapterTheme(false),
     });
 
     /* =========================================================================
-       10. PUBLIC API (dock, mobile menu, capability list, estimator)
+       10. PUBLIC API (header and menu roll buttons, capability list, estimator)
        ========================================================================= */
-    function setFormation(mode, isWire) {
-      sound.playMorph();
-      if (mode === "wireframe") {
-        diceMaterials.forEach((m) => (m.wireframe = isWire));
-        subCubes.forEach((c) => (c.material.wireframe = isWire));
-        return;
-      }
-      startFormation(FORMATION_ALIASES[mode] || "dice");
-    }
-
     if (stageRef) {
       stageRef.current = {
         rollToFace: rollMainDieToFace,
         rollRandom,
-        setFormation,
       };
     }
 
@@ -1244,6 +1145,9 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
             formation: formationKey,
             section: activeSectionId,
             dieMode,
+            pixelRatio: renderer.getPixelRatio(),
+            beganAt,
+            settled: beganAt > 0 && subCubes.every((cube) => !cube.userData.transStart),
           };
         },
         path: () =>
@@ -1324,9 +1228,7 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
           cursorRing.classList.remove("mode-explore");
           if (cursorText) cursorText.textContent = "ROTATE";
         }
-        sound.playClick(920);
       } else {
-        const idx = target.userData.index;
         gsap.to(target.material, {
           emissiveIntensity: 1.2,
           duration: 0.22,
@@ -1338,7 +1240,6 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
           cursorRing.classList.remove("mode-drag");
           if (cursorText) cursorText.textContent = `SATELLITE // ${target.userData.name}`;
         }
-        sound.playClick(1040 + (idx % 12) * 22);
       }
     }
 
@@ -1423,9 +1324,8 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
 
       if (activeDragObject === mainDie) {
         if (tapped) {
-          sound.playRoll();
           rippleCubes(1.0, 8);
-          rollMainDieToFace((currentFaceIndex + 1) % 6, { tumble: true, silent: true });
+          rollMainDieToFace((currentFaceIndex + 1) % 6, { tumble: true });
         } else {
           coastSpeed = Math.min(dragSpeed, 0.085);
           dieMode = "coast";
@@ -1434,7 +1334,6 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
         // Tapped a satellite: it spins in place and flashes
         const cube = activeDragObject;
         const u = cube.userData;
-        sound.playClick(680 + (u.index % 12) * 45);
         u.spinAxis.set(0.6, 1, 0).normalize();
         u.spinSpeed = 0.3;
         gsap.to(cube.material, { emissiveIntensity: 1.5, duration: 0.18, yoyo: true, repeat: 1 });
@@ -1528,12 +1427,41 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
 
     let animId = 0;
     let lastFrameTime = performance.now();
+    // When the first frame was drawn (QA timing, see ?debug)
+    let beganAt = 0;
+
+    // Smoothness guard: when a device cannot hold a steady frame rate, the 3D
+    // is drawn at a lower resolution, one step at a time, instead of letting
+    // the whole page stutter. It only ever steps down.
+    const MIN_PIXEL_RATIO = 0.75;
+    let guardFrom = Infinity;
+    let guardFrames = 0;
+    let guardMs = 0;
+
+    function watchFrameRate(now, elapsed) {
+      // Long gaps (a hidden tab, a paused page) say nothing about smoothness
+      if (now < guardFrom || elapsed > 250) return;
+      guardFrames += 1;
+      guardMs += elapsed;
+      if (guardMs < 2000) return;
+      const fps = (guardFrames * 1000) / guardMs;
+      guardFrames = 0;
+      guardMs = 0;
+      const ratio = renderer.getPixelRatio();
+      if (fps < 30 && ratio > MIN_PIXEL_RATIO) {
+        renderer.setPixelRatio(Math.max(MIN_PIXEL_RATIO, ratio - 0.25));
+        // Let the new size settle before judging again
+        guardFrom = now + 600;
+      }
+    }
 
     function renderWebGL() {
       // f = elapsed time in 60 Hz frames, so motion is identical at 60, 120 or 144 Hz
       const now = performance.now();
-      const f = Math.min((now - lastFrameTime) / FRAME_MS, 3);
+      const elapsed = now - lastFrameTime;
+      const f = Math.min(elapsed / FRAME_MS, 3);
       lastFrameTime = now;
+      watchFrameRate(now, elapsed);
       const dt = f / 60;
       // Every formation's own motion speeds up while the page is being scrolled
       motionTime += dt * (1 + 2.2 * energy);
@@ -1541,7 +1469,6 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
       updatePose(f);
       updateDie(f, now, dt);
       updateCubes(f, now);
-      updateRungs(f);
       updateLiveFace(now);
       updateShadow(f);
 
@@ -1568,13 +1495,17 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
     const begin = () => {
       if (disposed || animId) return;
       const startTime = performance.now();
+      beganAt = startTime;
+      // Quick, tight fly-in: the formation is complete about 1.3 s after the first frame
       subCubes.forEach((cube, i) => {
         const u = cube.userData;
-        u.transStart = startTime + 250 + i * 26;
-        u.transDur = 1500;
+        u.transStart = startTime + 60 + i * 12;
+        u.transDur = 900;
       });
-      holdUntil = startTime + 2400;
+      holdUntil = startTime + 1200;
       lastFrameTime = startTime;
+      // The first moments include the cubes' fly-in and late shader work
+      guardFrom = startTime + 1500;
       renderWebGL();
     };
     if (typeof renderer.compileAsync === "function") {

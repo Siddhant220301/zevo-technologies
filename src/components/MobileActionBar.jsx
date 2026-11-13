@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import FormationSwitch from "@/components/FormationSwitch";
 
-// Thumb-zone bar for phones and tablets: the die's formation switch plus the
-// call-to-action for where the visitor is. It appears once the hero buttons
-// have scrolled away and steps aside from the contact form onwards.
-export default function MobileActionBar({ activeFormation, onFormationChange }) {
+// Thumb-zone call-to-action for phones and tablets, for where the visitor is.
+// It appears once the hero buttons have scrolled away and steps aside from
+// the contact form onwards.
+export default function MobileActionBar() {
   const [visible, setVisible] = useState(false);
   const [inEstimator, setInEstimator] = useState(false);
 
@@ -46,12 +45,6 @@ export default function MobileActionBar({ activeFormation, onFormationChange }) 
 
   return (
     <div className={`mobile-action-bar ${visible ? "is-visible" : ""}`} aria-hidden={!visible}>
-      <FormationSwitch
-        compact
-        activeFormation={activeFormation}
-        onFormationChange={onFormationChange}
-        tabIndex={tabIndex}
-      />
       {inEstimator ? (
         <a href="#contact" className="btn-action-primary" tabIndex={tabIndex}>
           <span>DISCUSS THIS PROJECT</span>

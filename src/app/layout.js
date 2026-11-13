@@ -81,13 +81,13 @@ export default function RootLayout({ children }) {
       suppressHydrationWarning
     >
       <body suppressHydrationWarning>
-        {/* Runs before first paint: decides the motion mode (URL override, then a
-            stored choice, then the system setting) and writes it to <html> so
-            CSS and scripts agree. See src/lib/motion.js. */}
+        {/* Runs before first paint: decides the motion mode (URL override, then
+            the visitor's stored choice, then full motion) and writes it to <html>
+            so CSS and scripts agree. See src/lib/motion.js. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "(function(){try{var d=document.documentElement,s=location.search,m=null;if(/[?&]motion=(force|full)(&|$)/.test(s))m='full';else if(/[?&]motion=(calm|lite)(&|$)/.test(s))m='calm';else{try{m=localStorage.getItem('zevo-motion')}catch(e){}}if(m!=='full'&&m!=='calm')m=matchMedia('(prefers-reduced-motion: reduce)').matches?'calm':'full';d.classList.add('motion-ok','motion-'+m)}catch(e){}})()",
+              "(function(){try{var d=document.documentElement,s=location.search,m=null;if(/[?&]motion=(force|full)(&|$)/.test(s))m='full';else if(/[?&]motion=(calm|lite)(&|$)/.test(s))m='calm';else{try{m=localStorage.getItem('zevo-motion')}catch(e){}}if(m!=='calm')m='full';d.classList.add('motion-ok','motion-'+m)}catch(e){}})()",
           }}
         />
         <script

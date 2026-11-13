@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import sound from "@/utils/audio";
 
 const moduleData = {
   erp: { name: "Custom Operations Tool / ERP", inr: 1.8, inrTag: "1.8L", usd: 2200, usdTag: "2.2k", hrs: 80, face: 0 },
@@ -45,13 +44,11 @@ export default function EstimatorSection({ onSelectFace, onRandomizeSpec }) {
   }, [selectedModules, activeTierId]);
 
   const handleCurrToggle = (newCurr) => {
-    sound.playClick(900);
     setCurr(newCurr);
   };
 
   const handleModuleToggle = (key) => {
     const nextState = !selectedModules[key];
-    sound.playClick(nextState ? 1100 : 700);
     setSelectedModules((prev) => ({ ...prev, [key]: nextState }));
 
     if (nextState && onSelectFace) {
@@ -60,7 +57,6 @@ export default function EstimatorSection({ onSelectFace, onRandomizeSpec }) {
   };
 
   const handleTierSelect = (tier) => {
-    sound.playClick(900);
     setActiveTierId(tier.id);
   };
 
@@ -96,7 +92,6 @@ export default function EstimatorSection({ onSelectFace, onRandomizeSpec }) {
   const hoursDisplay = baseHrs === 0 ? "0 HOURS" : `${minHrs} — ${maxHrs} HOURS (${weeks}–${weeks + 2} WEEKS)`;
 
   const handleRandomizeClick = () => {
-    sound.playRoll();
     const keys = Object.keys(moduleData);
     const shuffled = [...keys].sort(() => 0.5 - Math.random());
     const countToPick = 2 + Math.floor(Math.random() * 3); // 2, 3, or 4
@@ -120,7 +115,6 @@ export default function EstimatorSection({ onSelectFace, onRandomizeSpec }) {
   };
 
   const handleLockEstimate = () => {
-    sound.playClick(1200);
     const chosenNames = Object.keys(selectedModules)
       .filter((k) => selectedModules[k])
       .map((k) => moduleData[k].name);

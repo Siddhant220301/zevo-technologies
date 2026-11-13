@@ -13,28 +13,12 @@ const LINKS = [
   { href: "#estimator", label: "Estimator" },
 ];
 
-const FORMATIONS = [
-  { mode: "dice", label: "01 DICE RAIL" },
-  { mode: "grid", label: "02 VOXEL MATRIX" },
-  { mode: "ring", label: "03 DNA HELIX" },
-  { mode: "saturn", label: "04 SATURN RINGS" },
-];
-
 // Full-screen navigation for tablet and phone widths. Holds every control the
-// desktop header and dock expose, so nothing is lost when they are hidden.
-export default function MobileMenu({
-  open,
-  onClose,
-  audioActive,
-  onAudioToggle,
-  onRollDice,
-  activeFormation,
-  wireframeActive,
-  onFormationChange,
-}) {
+// desktop header has, so nothing is lost when it is hidden.
+export default function MobileMenu({ open, onClose, onRollDice }) {
   const panelRef = useRef(null);
-  // Only set for visitors whose system asks for reduced motion (or who chose a mode)
-  const motionChoice = useMotionChoice();
+  // "full" | "calm" once the page is running (null while rendering on the server)
+  const motion = useMotionChoice();
 
   useEffect(() => {
     document.documentElement.classList.toggle("menu-open", open);
@@ -71,49 +55,18 @@ export default function MobileMenu({
         ))}
       </nav>
 
-      <div className="mobile-menu-group">
-        <span className="mobile-menu-label">ENGINE:</span>
-        <div className="mobile-menu-pills">
-          {FORMATIONS.map((f) => (
-            <button
-              key={f.mode}
-              type="button"
-              className={`dock-pill ${activeFormation === f.mode ? "active" : ""}`}
-              aria-pressed={activeFormation === f.mode}
-              onClick={() => onFormationChange(f.mode)}
-            >
-              {f.label}
-            </button>
-          ))}
+      <div className="mobile-menu-actions">
+        {motion && (
           <button
             type="button"
-            className={`dock-pill ${wireframeActive ? "active" : ""}`}
-            aria-pressed={wireframeActive}
-            onClick={() => onFormationChange("wireframe")}
+            className="motion-toggle-btn"
+            aria-pressed={motion === "full"}
+            title={motion === "full" ? "Switch to lighter motion" : "Switch to full motion"}
+            onClick={() => setMotionMode(motion === "full" ? "calm" : "full")}
           >
-            WIREFRAME
+            {motion === "full" ? "MOTION: FULL" : "MOTION: LITE"}
           </button>
-          {motionChoice && (
-            <button
-              type="button"
-              className={`dock-pill ${motionChoice === "full" ? "active" : ""}`}
-              aria-pressed={motionChoice === "full"}
-              onClick={() => setMotionMode(motionChoice === "calm" ? "full" : "calm")}
-            >
-              {motionChoice === "calm" ? "MOTION: LITE" : "MOTION: FULL"}
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div className="mobile-menu-actions">
-        <button
-          type="button"
-          className={`audio-toggle-btn ${audioActive ? "active" : ""}`}
-          onClick={onAudioToggle}
-        >
-          <span>{audioActive ? "AUDIO: ON" : "AUDIO: OFF"}</span>
-        </button>
+        )}
         <button
           type="button"
           className="roll-dice-header-btn"

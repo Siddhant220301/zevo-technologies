@@ -3,10 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import sound from "@/utils/audio";
-import FormationSwitch from "@/components/FormationSwitch";
-
-export default function HeroSection({ activeFormation, onFormationChange }) {
+export default function HeroSection() {
   const m1Ref = useRef(null);
   const m3Ref = useRef(null);
   const deckRef = useRef(null);
@@ -42,10 +39,6 @@ export default function HeroSection({ activeFormation, onFormationChange }) {
     };
   }, []);
 
-  const handleCtaClick = () => {
-    sound.playClick(850);
-  };
-
   return (
     <section className="hero-section content-grid" id="hero">
       <div className="hero-status-pill interactive-zone">
@@ -53,11 +46,8 @@ export default function HeroSection({ activeFormation, onFormationChange }) {
         <span>FULL-SERVICE ENGINEERING &amp; PRODUCT STUDIO // ACCEPTING SELECT NEW PROJECTS</span>
       </div>
 
-      {/* Phones only: reserved space where the 3D die sits above the headline,
-          with the one-tap formation switch in its corner */}
-      <div className="stage-slot stage-slot--hero">
-        <FormationSwitch activeFormation={activeFormation} onFormationChange={onFormationChange} />
-      </div>
+      {/* Phones only: reserved space where the 3D die sits above the headline */}
+      <div className="stage-slot stage-slot--hero" aria-hidden="true" />
 
       {/* Each line is its own block so it can rise in on its own with plain CSS */}
       <h1 className="hero-headline">
@@ -82,21 +72,11 @@ export default function HeroSection({ activeFormation, onFormationChange }) {
             focused, transparent 2-week milestones.
           </p>
           <div className="hero-cta-cluster">
-            <a
-              href="#capabilities"
-              className="btn-action-primary"
-              data-cursor="EXPLORE"
-              onClick={handleCtaClick}
-            >
+            <a href="#capabilities" className="btn-action-primary" data-cursor="EXPLORE">
               <span>EXPLORE CAPABILITIES</span>
               <span>↘</span>
             </a>
-            <a
-              href="#estimator"
-              className="btn-action-secondary"
-              data-cursor="ESTIMATE"
-              onClick={handleCtaClick}
-            >
+            <a href="#estimator" className="btn-action-secondary" data-cursor="ESTIMATE">
               <span>CALCULATE ESTIMATE</span>
             </a>
           </div>

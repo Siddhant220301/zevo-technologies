@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import sound from "@/utils/audio";
 
 const erpSpecs = {
   supply: {
@@ -38,7 +37,6 @@ export default function ErpSection({ onSelectFace }) {
   const [activeTab, setActiveTab] = useState("supply");
 
   const handleTabClick = (key) => {
-    sound.playClick(950);
     setActiveTab(key);
     if (onSelectFace) {
       onSelectFace(0);

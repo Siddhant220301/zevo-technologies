@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import sound from "@/utils/audio";
 
 export default function MotionLabSection() {
   const canvasRef = useRef(null);
@@ -243,11 +242,9 @@ export default function MotionLabSection() {
 
   const handleCanvasClick = () => {
     rippleRadiusRef.current = 10;
-    sound.playMorph();
   };
 
-  const handleReelClick = (mode, idx) => {
-    sound.playClick(1050 + idx * 120);
+  const handleReelClick = (mode) => {
     setReelMode(mode);
     rippleRadiusRef.current = 15;
   };
@@ -293,7 +290,7 @@ export default function MotionLabSection() {
               className={`reel-btn ${reelMode === "0" ? "active" : ""}`}
               data-reel="0"
               data-cursor="SWITCH"
-              onClick={() => handleReelClick("0", 0)}
+              onClick={() => handleReelClick("0")}
             >
               <span className="sub">STYLE 01 //</span>
               <strong>Interactive Product Launch</strong>
@@ -303,7 +300,7 @@ export default function MotionLabSection() {
               className={`reel-btn ${reelMode === "1" ? "active" : ""}`}
               data-reel="1"
               data-cursor="SWITCH"
-              onClick={() => handleReelClick("1", 1)}
+              onClick={() => handleReelClick("1")}
             >
               <span className="sub">STYLE 02 //</span>
               <strong>Kinetic Motion Graphics</strong>
@@ -313,7 +310,7 @@ export default function MotionLabSection() {
               className={`reel-btn ${reelMode === "2" ? "active" : ""}`}
               data-reel="2"
               data-cursor="SWITCH"
-              onClick={() => handleReelClick("2", 2)}
+              onClick={() => handleReelClick("2")}
             >
               <span className="sub">STYLE 03 //</span>
               <strong>Cinematic Showcase</strong>

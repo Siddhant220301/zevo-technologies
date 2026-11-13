@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import sound from "@/utils/audio";
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({ name: "", email: "", scope: "" });
@@ -10,7 +9,6 @@ export default function ContactSection() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    sound.playMorph();
     setSubmitting(true);
 
     setTimeout(() => {
@@ -22,10 +20,6 @@ export default function ContactSection() {
         setSubmitted(false);
       }, 4000);
     }, 700);
-  };
-
-  const handleWhatsAppClick = () => {
-    sound.playClick(1000);
   };
 
   return (
@@ -60,7 +54,6 @@ export default function ContactSection() {
           rel="noopener noreferrer"
           className="whatsapp-quick-btn"
           data-cursor="WHATSAPP"
-          onClick={handleWhatsAppClick}
         >
           <span>💬 QUICK CHAT ON WHATSAPP</span>
           <span>→</span>

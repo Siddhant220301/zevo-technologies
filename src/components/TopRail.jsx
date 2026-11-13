@@ -1,11 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import sound from "@/utils/audio";
 import MobileMenu from "@/components/MobileMenu";
+import ZevoLogo from "@/components/ZevoLogo";
 
-export default function TopRail({ onRollDice, activeFormation, wireframeActive, onFormationChange }) {
-  const [audioActive, setAudioActive] = useState(false);
+export default function TopRail({ onRollDice }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = useCallback(() => setMenuOpen(false), []);
   const railRef = useRef(null);
@@ -39,16 +38,6 @@ export default function TopRail({ onRollDice, activeFormation, wireframeActive, 
     };
   }, []);
 
-  const handleAudioToggle = () => {
-    const active = sound.toggle();
-    setAudioActive(active);
-    if (active) sound.playClick(1100);
-  };
-
-  const handleNavClick = (e, href) => {
-    sound.playClick(850);
-  };
-
   const handleRollClick = () => {
     if (onRollDice) onRollDice();
   };
@@ -56,71 +45,49 @@ export default function TopRail({ onRollDice, activeFormation, wireframeActive, 
   return (
     <>
     <header className="top-rail" ref={railRef}>
-      <a
-        href="#hero"
-        className="brand-cluster"
-        data-cursor="HOME"
-        onClick={(e) => handleNavClick(e, "#hero")}
-      >
-        <div className="brand-cube-badge">Z</div>
-        <div className="brand-text-block">
-          <span className="brand-name">ZEVO TECHNOLOGIES</span>
-          <span className="brand-tagline">DIGITAL PRODUCT &amp; CREATIVE STUDIO</span>
-        </div>
+      <a href="#hero" className="brand-cluster" data-cursor="HOME">
+        <ZevoLogo variant="compact" className="brand-logo" />
       </a>
 
       <ul className="nav-menu">
         <li>
-          <a href="#about" data-cursor="ABOUT" onClick={(e) => handleNavClick(e, "#about")}>
+          <a href="#about" data-cursor="ABOUT">
             About Us
           </a>
         </li>
         <li>
-          <a href="#mission" data-cursor="MISSION" onClick={(e) => handleNavClick(e, "#mission")}>
+          <a href="#mission" data-cursor="MISSION">
             Vision &amp; Mission
           </a>
         </li>
         <li>
-          <a href="#capabilities" data-cursor="CAPS" onClick={(e) => handleNavClick(e, "#capabilities")}>
+          <a href="#capabilities" data-cursor="CAPS">
             Capabilities
           </a>
         </li>
         <li>
-          <a href="#erp" data-cursor="ERP" onClick={(e) => handleNavClick(e, "#erp")}>
+          <a href="#erp" data-cursor="ERP">
             Custom ERP
           </a>
         </li>
         <li>
-          <a href="#motion" data-cursor="MOTION" onClick={(e) => handleNavClick(e, "#motion")}>
+          <a href="#motion" data-cursor="MOTION">
             Motion Lab
           </a>
         </li>
         <li>
-          <a href="#cases" data-cursor="CASES" onClick={(e) => handleNavClick(e, "#cases")}>
+          <a href="#cases" data-cursor="CASES">
             Case Studies
           </a>
         </li>
         <li>
-          <a href="#estimator" data-cursor="ESTIMATOR" onClick={(e) => handleNavClick(e, "#estimator")}>
+          <a href="#estimator" data-cursor="ESTIMATOR">
             Estimator
           </a>
         </li>
       </ul>
 
       <div className="nav-cta-zone">
-        <button
-          type="button"
-          className={`audio-toggle-btn ${audioActive ? "active" : ""}`}
-          id="sfxToggle"
-          data-cursor="AUDIO"
-          onClick={handleAudioToggle}
-        >
-          <span className="audio-icon" id="sfxIcon">
-            {audioActive ? "🔊" : "🔈"}
-          </span>
-          <span id="sfxLabel">{audioActive ? "AUDIO: ON" : "AUDIO: OFF"}</span>
-        </button>
-
         <button
           type="button"
           className="roll-dice-header-btn"
@@ -131,12 +98,7 @@ export default function TopRail({ onRollDice, activeFormation, wireframeActive, 
           🎲 <span>ROLL DIE</span>
         </button>
 
-        <a
-          href="#contact"
-          className="btn-header-cta"
-          data-cursor="CONTACT"
-          onClick={(e) => handleNavClick(e, "#contact")}
-        >
+        <a href="#contact" className="btn-header-cta" data-cursor="CONTACT">
           CONTACT //
         </a>
 
@@ -146,26 +108,14 @@ export default function TopRail({ onRollDice, activeFormation, wireframeActive, 
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
           aria-controls="mobileMenu"
-          onClick={() => {
-            sound.playClick(900);
-            setMenuOpen((v) => !v);
-          }}
+          onClick={() => setMenuOpen((v) => !v)}
         >
           <span />
           <span />
         </button>
       </div>
     </header>
-    <MobileMenu
-      open={menuOpen}
-      onClose={closeMenu}
-      audioActive={audioActive}
-      onAudioToggle={handleAudioToggle}
-      onRollDice={handleRollClick}
-      activeFormation={activeFormation}
-      wireframeActive={wireframeActive}
-      onFormationChange={onFormationChange}
-    />
+    <MobileMenu open={menuOpen} onClose={closeMenu} onRollDice={handleRollClick} />
     </>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import sound from "@/utils/audio";
 import { getMotionMode } from "@/lib/motion";
 
 const REST = "perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0px)";
@@ -62,7 +61,6 @@ export default function TiltCardInitializer() {
           glare.className = "tilt-glare";
           card.appendChild(glare);
         }
-        sound.playClick(1350);
       }
       px = e.clientX;
       py = e.clientY;

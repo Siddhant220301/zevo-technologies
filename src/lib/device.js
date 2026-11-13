@@ -11,7 +11,7 @@ export function getDeviceProfile() {
   }
 
   const coarse = window.matchMedia("(pointer: coarse)").matches;
-  // "calm" = the system asks for reduced motion and the visitor has not chosen otherwise
+  // "calm" = the visitor switched to lighter motion (see lib/motion.js)
   const reducedMotion = getMotionMode() === "calm";
   const saveData = Boolean(navigator.connection && navigator.connection.saveData);
   const memory = navigator.deviceMemory || 8;
