@@ -5,6 +5,7 @@ import { gsap, ScrollTrigger, SplitText } from "@/lib/gsap";
 import { getMotionMode } from "@/lib/motion";
 
 const CARD_SELECTOR = [
+  ".about-photo",
   ".about-card",
   ".about-creds-strip",
   ".mission-card",
@@ -13,8 +14,11 @@ const CARD_SELECTOR = [
   ".erp-interactive-console",
   ".shader-monitor-card",
   ".case-card",
-  ".estimator-box",
-  ".est-spatial-companion",
+  ".faq-item",
+  ".svc-card",
+  ".svc-fit-list",
+  ".svc-other-row",
+  ".svc-cta-band",
   ".contact-form-col",
   ".whatsapp-quick-btn",
 ].join(", ");
@@ -74,7 +78,10 @@ export default function MotionDirector() {
       }
 
       navLinks.forEach((link) => {
-        const target = document.querySelector(link.getAttribute("href"));
+        // "#about" on the home page, "/#about" on the inner pages (no section there)
+        const href = link.getAttribute("href") || "";
+        const hash = href.includes("#") ? href.slice(href.indexOf("#") + 1) : "";
+        const target = hash ? document.getElementById(hash) : null;
         if (!target) return;
         ScrollTrigger.create({
           trigger: target,
@@ -222,7 +229,7 @@ export default function MotionDirector() {
         const title = section.querySelector(".section-title");
         const sub = section.querySelector(".section-subtext");
         if (tag) watch(tag, "tag");
-        // Titles holding controls (the estimator's currency switch) rise as one block
+        // A title that holds a control rises as one block instead of line by line
         if (title) watch(title, title.querySelector("button") ? "block" : "title");
         if (sub) watch(sub, "soft");
       });

@@ -1,3 +1,16 @@
+import Image from "next/image";
+import { CASE_SHOTS } from "@/lib/photos";
+
+// A screenshot at the top of a case study card, once one is set in lib/photos.js
+function CaseShot({ shot }) {
+  if (!shot || !shot.src) return null;
+  return (
+    <div className="case-shot">
+      <Image src={shot.src} alt={shot.alt} fill sizes="(max-width: 768px) 100vw, 33vw" />
+    </div>
+  );
+}
+
 export default function CaseStudiesSection() {
   return (
     <section className="section-wrap content-grid" id="cases">
@@ -17,6 +30,7 @@ export default function CaseStudiesSection() {
 
       <div className="cases-row-deck interactive-zone">
         <article className="case-card case-01 tilt-card" data-cursor="CASE 01">
+          <CaseShot shot={CASE_SHOTS[0]} />
           <span className="case-num">CASE STUDY // 01</span>
           <h3>Shree Balaji Logistics — Unified Warehouse Inventory &amp; Invoicing Portal</h3>
           <p>
@@ -36,6 +50,7 @@ export default function CaseStudiesSection() {
         </article>
 
         <article className="case-card case-02 tilt-card" data-cursor="CASE 02">
+          <CaseShot shot={CASE_SHOTS[1]} />
           <span className="case-num">CASE STUDY // 02</span>
           <h3>Zenith Lifestyle — Interactive 360° Footwear Customizer</h3>
           <p>
@@ -55,6 +70,7 @@ export default function CaseStudiesSection() {
         </article>
 
         <article className="case-card case-03 tilt-card" data-cursor="CASE 03">
+          <CaseShot shot={CASE_SHOTS[2]} />
           <span className="case-num">CASE STUDY // 03</span>
           <h3>Kavach Health — Patient Records &amp; Clinic Operations Portal</h3>
           <p>

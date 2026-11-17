@@ -37,49 +37,49 @@ export default function MissionSection() {
           </div>
         </div>
 
+        <div className="mission-divider">{"// HOW A PROJECT RUNS"}</div>
+
         <div className="mission-card tilt-card">
           <div>
-            <span className="mission-num">01 // ZERO SEAT TAX</span>
-            <h3>No Recurring License Fees</h3>
+            <span className="mission-num">01 // TALK</span>
+            <h3>Start With a Conversation</h3>
             <p>
-              Stop paying monthly software fees every time your team grows. You invest once to
-              engineer your proprietary platform, and it belongs to your business forever with
-              zero per-seat charges.
+              Send a short brief. You talk directly with the engineers and designers who will build
+              your product, and receive a scope breakdown and milestone estimate within 24 hours.
             </p>
           </div>
         </div>
 
         <div className="mission-card tilt-card">
           <div>
-            <span className="mission-num">02 // OPERATIONS FIRST</span>
-            <h3>Built for Real Business Needs</h3>
+            <span className="mission-num">02 // SCOPE</span>
+            <h3>Clear Milestones, Honest Pricing</h3>
             <p>
-              Engineered around your actual operational workflows: multi-location inventory
-              synchronization, automated GST e-invoices, real-time e-way bills, and automated
-              WhatsApp status alerts.
+              Every milestone has a defined scope and a predictable price in ₹ Lakhs, agreed before
+              work begins. Zero hidden costs.
             </p>
           </div>
         </div>
 
         <div className="mission-card tilt-card">
           <div>
-            <span className="mission-num">03 // SPEED &amp; SCALE</span>
-            <h3>Blazing Fast Across Every Device</h3>
+            <span className="mission-num">03 // BUILD</span>
+            <h3>Working Releases Every 2 Weeks</h3>
             <p>
-              Clean, lightweight engineering that loads instantaneously across office workstations,
-              mobile browsers, warehouse handhelds, and factory floor networks with zero lag.
+              No multi-month delays or vague roadmaps. We build in agile 2-week sprints and deploy
+              testable software to a live staging environment, so your team can try features and give
+              feedback in real time.
             </p>
           </div>
         </div>
 
         <div className="mission-card tilt-card">
           <div>
-            <span className="mission-num">04 // TRANSPARENT SPRINTS</span>
-            <h3>Clear, Honest Milestone Pricing</h3>
+            <span className="mission-num">04 // HAND OVER</span>
+            <h3>Launched, Then Fully Yours</h3>
             <p>
-              Predictable sprint pricing in ₹ Lakhs. Defined milestone scopes, live testable
-              staging releases every 14 days, direct engineering communication, and zero hidden
-              costs.
+              We deploy to production and hand over the Git repositories, Docker configurations, and
+              complete database access. From day one it runs on your terms.
             </p>
           </div>
         </div>

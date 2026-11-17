@@ -1,10 +1,11 @@
 import { Plus_Jakarta_Sans, Instrument_Serif, Space_Mono } from "next/font/google";
 import "./globals.css";
+import JsonLd from "@/components/JsonLd";
+import { SERVICES } from "@/lib/services";
+import { SITE } from "@/lib/site";
 
-const SITE_URL = "https://www.zevotechnologies.com";
-const TITLE = "ZEVO TECHNOLOGIES — Digital Product & Engineering Studio";
-const DESCRIPTION =
-  "Full-service digital product and engineering studio. We build custom business tools, operations portals, interactive web applications, and high-performance digital systems.";
+const TITLE = `${SITE.title} | ${SITE.name}`;
+const SHARE_IMAGE = { url: "/og/home.jpg", width: 1200, height: 630, alt: `${SITE.name}: ${SITE.title}` };
 
 // Self-hosted through next/font: no render-blocking request to Google
 const jakarta = Plus_Jakarta_Sans({
@@ -13,10 +14,11 @@ const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
 });
 
+// Only the italic is used (the accent words), so only the italic is loaded
 const instrument = Instrument_Serif({
   subsets: ["latin"],
   weight: "400",
-  style: ["normal", "italic"],
+  style: ["italic"],
   display: "swap",
   variable: "--font-instrument",
 });
@@ -28,24 +30,29 @@ const spaceMono = Space_Mono({
   variable: "--font-space-mono",
 });
 
+// Defaults for every page. A page that sets its own title gets
+// "<its title> | Zevo Technologies"; pages set their own canonical address.
 export const metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: TITLE,
-  description: DESCRIPTION,
-  alternates: { canonical: "/" },
+  metadataBase: new URL(SITE.url),
+  title: { default: TITLE, template: `%s | ${SITE.name}` },
+  description: SITE.description,
+  applicationName: SITE.name,
   openGraph: {
     type: "website",
     url: "/",
-    siteName: "ZEVO TECHNOLOGIES",
+    siteName: SITE.name,
     title: TITLE,
-    description: DESCRIPTION,
+    description: SITE.description,
     locale: "en_IN",
+    images: [SHARE_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: TITLE,
-    description: DESCRIPTION,
+    description: SITE.description,
+    images: [SHARE_IMAGE.url],
   },
+  ...(SITE.googleVerification ? { verification: { google: SITE.googleVerification } } : {}),
   other: {
     "darkreader-lock": "true",
   },
@@ -59,17 +66,39 @@ export const viewport = {
   themeColor: "#F4F2ED",
 };
 
-const jsonLd = {
+// Who the business is, for search engines. The service pages point back to
+// this record as their provider.
+const organization = {
   "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  name: "ZEVO TECHNOLOGIES",
-  url: SITE_URL,
-  description: DESCRIPTION,
-  email: "info@zevotechnologies.com",
-  areaServed: "IN",
-  address: [
-    { "@type": "PostalAddress", addressLocality: "Bengaluru", addressRegion: "Karnataka", addressCountry: "IN" },
-    { "@type": "PostalAddress", addressLocality: "Mumbai", addressRegion: "Maharashtra", addressCountry: "IN" },
+  "@graph": [
+    {
+      "@type": "ProfessionalService",
+      "@id": `${SITE.url}/#organization`,
+      name: SITE.name,
+      url: SITE.url,
+      logo: `${SITE.url}/logo.png`,
+      image: `${SITE.url}${SHARE_IMAGE.url}`,
+      description: SITE.description,
+      email: SITE.email,
+      areaServed: { "@type": "Country", name: "India" },
+      address: SITE.locations.map((place) => ({
+        "@type": "PostalAddress",
+        addressLocality: place.city,
+        addressRegion: place.region,
+        addressCountry: "IN",
+      })),
+      knowsAbout: SERVICES.map((service) => service.name),
+      ...(SITE.whatsapp ? { telephone: `+${SITE.whatsapp}` } : {}),
+      ...(SITE.profiles.length ? { sameAs: SITE.profiles } : {}),
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE.url}/#website`,
+      url: SITE.url,
+      name: SITE.name,
+      inLanguage: "en-IN",
+      publisher: { "@id": `${SITE.url}/#organization` },
+    },
   ],
 };
 
@@ -90,10 +119,7 @@ export default function RootLayout({ children }) {
               "(function(){try{var d=document.documentElement,s=location.search,m=null;if(/[?&]motion=(force|full)(&|$)/.test(s))m='full';else if(/[?&]motion=(calm|lite)(&|$)/.test(s))m='calm';else{try{m=localStorage.getItem('zevo-motion')}catch(e){}}if(m!=='calm')m='full';d.classList.add('motion-ok','motion-'+m)}catch(e){}})()",
           }}
         />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
-        />
+        <JsonLd data={organization} />
         {children}
       </body>
     </html>

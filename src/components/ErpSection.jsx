@@ -48,7 +48,7 @@ export default function ErpSection({ onSelectFace }) {
   return (
     <section className="section-wrap content-grid" id="erp">
       <div className="section-header-left">
-        <span className="section-tag">{"// 04 — ENTERPRISE BACKBONE"}</span>
+        <span className="section-tag">{"// 04 — CUSTOM ERP"}</span>
         <h2 className="section-title">
           Replace rigid software with a system you <em>own</em>.
         </h2>
@@ -61,7 +61,7 @@ export default function ErpSection({ onSelectFace }) {
 
       <div className="erp-cards-deck interactive-zone">
         <div className="erp-card tilt-card">
-          <span className="erp-pill-badge">OFF-THE-SHELF (SAP / ZOHO / ORACLE)</span>
+          <span className="erp-pill-badge">OFF-THE-SHELF ERP SOFTWARE</span>
           <h3>Expensive &amp; Rigid</h3>
           <ul>
             <li>— Heavy recurring monthly per-user license fees</li>

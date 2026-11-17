@@ -24,7 +24,6 @@ const TRANSITION_MS = 1150;
 const HOLD_MS = 2600;
 // Idle spin of the die, in radians per 60 Hz frame
 const AMBIENT_SPIN = 0.0034;
-const TIER_SCALE = { mvp: 0.9, standard: 1, expanded: 1.12 };
 // The cluster may never be drawn smaller or larger than this, relative to its base size
 const MIN_SCALE = 0.5;
 const MAX_SCALE = 1.5;
@@ -43,7 +42,9 @@ const cardinal = (p0, p1, p2, p3, e) => {
   return (2 * e3 - 3 * e2 + 1) * p1 + (e3 - 2 * e2 + e) * m1 + (-2 * e3 + 3 * e2) * p2 + (e3 - e2) * m2;
 };
 
-export default function WebGLStage({ onReadoutChange, stageRef }) {
+// `layout` is "home" for the home page and "article" for the inner pages,
+// where `face` is the die face that belongs to the page.
+export default function WebGLStage({ onReadoutChange, stageRef, layout = "home", face = 0 }) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -303,7 +304,6 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
       cube.userData = {
         index: i,
         name: p.name,
-        baseGlow: 0.06,
         restGlow: 0.06,
         emphasis: 1,
         anchor: new THREE.Vector3(),
@@ -499,27 +499,20 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
     });
 
     /* =========================================================================
-       5. ESTIMATOR LINK — cubes belonging to selected modules grow and glow
+       5. SECTION TRACKING — when the page moves on to another section, every
+          cube eases back to its resting glow
        ========================================================================= */
-    let moduleState = window.__zevoModules || { faces: [0, 1], tier: "standard" };
     let activeSectionId = "hero";
 
-    function refreshEmphasis() {
-      const inEstimator = activeSectionId === "estimator";
-      subCubes.forEach((cube, i) => {
-        const u = cube.userData;
-        const on = moduleState.faces.includes(i % 6);
-        u.emphasis = inEstimator ? (on ? 1.22 : 0.68) : 1;
-        u.restGlow = inEstimator ? (on ? 0.3 : 0) : u.baseGlow;
-        gsap.to(cube.material, { emissiveIntensity: u.restGlow, duration: 0.5, overwrite: "auto" });
+    function settleCubeGlow() {
+      subCubes.forEach((cube) => {
+        gsap.to(cube.material, {
+          emissiveIntensity: cube.userData.restGlow,
+          duration: 0.5,
+          overwrite: "auto",
+        });
       });
     }
-
-    const onModules = (e) => {
-      moduleState = e.detail;
-      refreshEmphasis();
-    };
-    window.addEventListener("zevo:modules", onModules);
 
     /* =========================================================================
        6. THE PATH
@@ -577,7 +570,29 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
         add(s, (c.x - W / 2) / (W / 2), -((c.y - s - H / 2) / (H / 2)), z, scale, opacity, ride);
       };
 
-      if (!compactLayout) {
+      if (layout === "article") {
+        // Inner pages: the text keeps the left columns and the die keeps the
+        // right rail, drifting a little from screen to screen so it is never
+        // frozen. On phones it leads in the stage reserved at the top, then
+        // rests as a soft glow at the right edge, drifting up and down it, so
+        // it never crosses the text being read.
+        const closing = centreOf("#closing-stage");
+        const lastRail = (closing ? closing.y - 0.5 * H : maxScroll) - 0.7 * H;
+        if (!compactLayout) {
+          add(0, 0.5, 0.06, 0, 0.98, 1, 0.1);
+          for (let k = 1; k * H < lastRail; k++) {
+            const odd = k % 2 === 1;
+            add(k * H, odd ? 0.54 : 0.47, odd ? -0.08 : 0.06, odd ? 0.4 : -0.2, odd ? 0.92 : 0.98, 1, 0.1);
+          }
+          pin("#closing-stage", 0.5, 0.3, 0.95, 1, 0.6, () => add(maxScroll, 0.5, -0.1, 0.3, 0.95, 1, 0.3));
+        } else {
+          pin(".stage-slot--hero", 0.24, 0, 0.78, 1, 0.9, () => add(0, 0.5, 0.55, 0, 0.78, 1, 0.9));
+          for (let k = 1; k * 0.9 * H < lastRail; k++) {
+            add(k * 0.9 * H, 0.96, k % 2 ? -0.16 : 0.2, -0.7, 0.8, 0.36, 0.15);
+          }
+          pin("#closing-stage", 0.5, 0.2, 0.8, 1, 0.8, () => add(maxScroll, 0, -0.2, 0.2, 0.8, 0.9, 0.3));
+        }
+      } else if (!compactLayout) {
         // Desktop: right rail, left rail, right rail — then the reserved places
         add(0, 0.44, 0.02, 0, 1.0, 1, 0.1);
         add(at("about", 0.2), 0.47, 0.0, 0.2, 0.96, 1, 0.1);
@@ -590,9 +605,8 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
         pin("#cases .stage-slot", 0.36, -0.5, 0.78, 1, 0.4, () =>
           add(at("cases", 0.1), 0.52, 0.4, -0.5, 0.78, 1, 0.3)
         );
-        pin(".est-stage-window", 0.42, 0.2, 0.74, 1, 0.4, () =>
-          add(at("estimator", 0.1), 0.62, 0.2, 0.2, 0.74, 1, 0.3)
-        );
+        // Questions: on the right rail, beside the list
+        add(at("faq", 0.2), 0.5, 0.0, 0.1, 0.94, 1, 0.1);
         // Contact: crosses to the open side and rises from the lower corner,
         // under the studio details and clear of the form
         add(at("contact", 0.1), -0.52, -0.84, 0.1, 0.86, 1, 0.2);
@@ -603,7 +617,7 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
         // sections — then moves to the edge and fades to a soft glow behind
         // the glass cards while that section is read. Sides alternate.
         pin(".stage-slot--hero", 0.24, 0, 0.78, 1, 0.9, () => add(0, 0.5, 0.55, 0, 0.78, 1, 0.9));
-        ["about", "mission", "capabilities", "erp", "motion", "cases", "estimator", "contact"].forEach(
+        ["about", "mission", "capabilities", "erp", "motion", "cases", "faq", "contact"].forEach(
           (id, n) => {
             const side = n % 2 ? -1 : 1;
             add(at(id, 0.36), side * 0.4, 0.42, 0.3, 0.86, 0.9, 0.3);
@@ -619,7 +633,7 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
       }
       path = keys;
 
-      sections = ["hero", "about", "mission", "capabilities", "erp", "motion", "cases", "estimator", "contact"]
+      sections = ["hero", "about", "mission", "capabilities", "erp", "motion", "cases", "faq", "contact"]
         .map((id) => ({ id, top: topOf(id) }))
         .filter((entry) => entry.top !== null);
     }
@@ -681,7 +695,7 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
       smoothScroll += (raw - smoothScroll) * ease(0.14, f);
       evalPath(smoothScroll);
 
-      // Which section is in view (estimator link)
+      // Which section is in view
       const centre = raw + H / 2;
       let current = activeSectionId;
       for (let i = 0; i < sections.length; i++) {
@@ -689,7 +703,7 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
       }
       if (current !== activeSectionId) {
         activeSectionId = current;
-        refreshEmphasis();
+        settleCubeGlow();
       }
 
       const halfH = VIEW_HEIGHT / 2;
@@ -876,11 +890,10 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
     }
 
     function updateDie(f, now, dt) {
-      const tier = activeSectionId === "estimator" ? TIER_SCALE[moduleState.tier] || 1 : 1;
       // Whatever the cluster and the formation ask for, the die itself is never
       // drawn smaller than half or larger than one and a half times its base size
       const wanted = clamp(
-        formation.dieScale * tier,
+        formation.dieScale,
         MIN_SCALE / Math.max(pose.scale, MIN_SCALE),
         MAX_SCALE / Math.max(pose.scale, MIN_SCALE)
       );
@@ -1107,9 +1120,10 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
     }
     updateChapterTheme(false);
 
-    const chapterTrigger = ScrollTrigger.create({
+    // Only the home page has the dark chapter (Motion Lab up to the questions)
+    const chapterTrigger = !document.getElementById("motion") ? null : ScrollTrigger.create({
       trigger: "#motion",
-      endTrigger: "#estimator",
+      endTrigger: "#faq",
       start: "top 50%",
       end: "top 50%",
       onEnter: () => updateChapterTheme(true),
@@ -1119,7 +1133,7 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
     });
 
     /* =========================================================================
-       10. PUBLIC API (header and menu roll buttons, capability list, estimator)
+       10. PUBLIC API (header and menu roll buttons, capability list, enquiry form)
        ========================================================================= */
     if (stageRef) {
       stageRef.current = {
@@ -1143,6 +1157,7 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
             clusterScale: Number(pose.scale.toFixed(3)),
             opacity: Number(pose.opacity.toFixed(2)),
             formation: formationKey,
+            layout,
             section: activeSectionId,
             dieMode,
             pixelRatio: renderer.getPixelRatio(),
@@ -1158,6 +1173,8 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
             scale: k.scale,
             opacity: k.opacity,
           })),
+        // Turns the die to a face (used to frame the link-preview images)
+        roll: (faceIndex) => rollMainDieToFace(faceIndex, { tumble: true }),
       };
     }
 
@@ -1426,6 +1443,8 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
     bodyObserver.observe(document.body);
 
     let animId = 0;
+    // Inner pages: timer for the roll to the page's own face on arrival
+    let arrivalRoll = 0;
     let lastFrameTime = performance.now();
     // When the first frame was drawn (QA timing, see ?debug)
     let beganAt = 0;
@@ -1507,6 +1526,12 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
       // The first moments include the cubes' fly-in and late shader work
       guardFrom = startTime + 1500;
       renderWebGL();
+      if (layout === "article") {
+        // Once the cubes have landed, the die turns to the face this page is about
+        arrivalRoll = window.setTimeout(() => {
+          if (!disposed) rollMainDieToFace(face, { tumble: true });
+        }, 1100);
+      }
     };
     if (typeof renderer.compileAsync === "function") {
       renderer.compileAsync(scene, camera).then(begin, begin);
@@ -1535,12 +1560,12 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
 
     return () => {
       disposed = true;
+      window.clearTimeout(arrivalRoll);
       cancelAnimationFrame(animId);
       cancelAnimationFrame(measureFrame);
       bodyObserver.disconnect();
       window.removeEventListener("resize", onResize);
       window.removeEventListener("mousemove", onGlobalMouseMove);
-      window.removeEventListener("zevo:modules", onModules);
       window.removeEventListener("deviceorientation", onTilt);
       window.removeEventListener("devicemotion", onShake);
       canvas.removeEventListener("pointerdown", onPointerDown);
@@ -1549,7 +1574,9 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
       window.removeEventListener("pointercancel", onPointerUp);
 
       // Kill only this component's triggers and tweens — other sections own theirs
-      chapterTrigger.kill();
+      if (chapterTrigger) chapterTrigger.kill();
+      // Leaving the page: the next page always starts in the light chapter
+      updateChapterTheme(false);
       ScrollTrigger.removeEventListener("refresh", buildPath);
       gsap.killTweensOf(faceTween);
       gsap.killTweensOf(mainDie.position);
@@ -1567,9 +1594,12 @@ export default function WebGLStage({ onReadoutChange, stageRef }) {
       });
       envTexture.dispose();
       pmrem.dispose();
+      // Leave the WebGL context at its defaults: if this same canvas is ever
+      // brought back, a new renderer starts from a clean state
+      renderer.resetState();
       renderer.dispose();
     };
-  }, [onReadoutChange, stageRef]);
+  }, [onReadoutChange, stageRef, layout, face]);
 
   return (
     <>

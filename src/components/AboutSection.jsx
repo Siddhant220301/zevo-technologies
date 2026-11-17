@@ -1,3 +1,6 @@
+import Image from "next/image";
+import { TEAM_PHOTO } from "@/lib/photos";
+
 export default function AboutSection() {
   return (
     <section className="section-wrap content-grid" id="about">
@@ -8,13 +11,22 @@ export default function AboutSection() {
           <em>Zero</em> corporate bureaucracy.
         </h2>
         <p className="section-subtext">
-          We are a full-service engineering and product design studio. You work directly with senior
-          specialists who architect your database, craft your user interfaces, and write your code—delivering
-          faster results, uncompromised quality, and complete transparency.
+          We are a full-service custom software and product design studio based in Bengaluru and
+          Mumbai. You work directly with the senior specialists who architect your database, craft
+          your interfaces, and write your code.
         </p>
       </div>
 
       <div className="about-cards-deck interactive-zone">
+        {TEAM_PHOTO.src && (
+          <figure className="about-photo">
+            <div className="photo-frame">
+              <Image src={TEAM_PHOTO.src} alt={TEAM_PHOTO.alt} fill sizes="(max-width: 1024px) 100vw, 60vw" />
+            </div>
+            {TEAM_PHOTO.caption && <figcaption>{TEAM_PHOTO.caption}</figcaption>}
+          </figure>
+        )}
+
         <div className="about-card tilt-card">
           <span className="about-badge">01 // DIRECT TEAM COLLABORATION</span>
           <h3>Work Directly With The Builders</h3>
@@ -41,12 +53,11 @@ export default function AboutSection() {
         </div>
 
         <div className="about-card tilt-card">
-          <span className="about-badge">03 // RAPID SPRINT CYCLES</span>
-          <h3>Working Releases Every 2 Weeks</h3>
+          <span className="about-badge">03 // SPEED ON EVERY DEVICE</span>
+          <h3>Blazing Fast Across Every Device</h3>
           <p>
-            No multi-month delays or vague roadmaps. We build in agile 2-week sprints, deploying
-            testable working software to live staging environments so your team can test features and give
-            feedback in real time.
+            Clean, lightweight engineering that loads instantaneously across office workstations,
+            mobile browsers, warehouse handhelds, and factory floor networks with zero lag.
           </p>
         </div>
       </div>
@@ -65,8 +76,8 @@ export default function AboutSection() {
           <span>Clean, Tested &amp; Documented</span>
         </div>
         <div>
-          <strong>Zero</strong>
-          <span>Monthly Per-User Fees</span>
+          <strong>24 Hrs</strong>
+          <span>First Scope &amp; Estimate</span>
         </div>
       </div>
     </section>

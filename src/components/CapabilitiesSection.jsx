@@ -5,6 +5,7 @@ import { useState } from "react";
 const capabilities = [
   {
     face: 0,
+    slug: "custom-erp-software",
     code: "[01 // ERP]",
     title: "Custom Operations & Inventory Portals",
     desc: "Multi-warehouse inventory tracking, automated GST e-invoicing, e-way bills & payment reconciliation.",
@@ -12,6 +13,7 @@ const capabilities = [
   },
   {
     face: 1,
+    slug: "interactive-web-experiences",
     code: "[02 // INTERACTIVE WEB]",
     title: "Interactive Web & Product Showcases",
     desc: "High-performance interactive product visualizers that let customers explore details, configure features, and buy with confidence.",
@@ -19,6 +21,7 @@ const capabilities = [
   },
   {
     face: 2,
+    slug: "whatsapp-workflow-automation",
     code: "[03 // AUTOMATION]",
     title: "WhatsApp & Workflow Automations",
     desc: "Automated customer order alerts, dispatch notifications, and document processing.",
@@ -26,6 +29,7 @@ const capabilities = [
   },
   {
     face: 3,
+    slug: "motion-design",
     code: "[04 // MOTION DESIGN]",
     title: "Motion Design & Visual Assets",
     desc: "Crisp product animations, explainer reels, and distinctive brand visuals.",
@@ -33,6 +37,7 @@ const capabilities = [
   },
   {
     face: 4,
+    slug: "web-application-development",
     code: "[05 // WEB APPS]",
     title: "High-Performance Web Applications",
     desc: "Modern, fast-loading web applications and landing pages built with Next.js and modern web standards.",
@@ -40,6 +45,7 @@ const capabilities = [
   },
   {
     face: 5,
+    slug: "mobile-app-development",
     code: "[06 // MOBILE]",
     title: "Mobile Applications (iOS & Android)",
     desc: "Responsive, smooth cross-platform mobile apps for field staff or customer-facing experiences.",
@@ -66,7 +72,8 @@ export default function CapabilitiesSection({ onSelectFace }) {
           Full-stack craft. <em>One</em> focused studio.
         </h2>
         <p className="section-subtext">
-          Hover or click any capability to turn the interactive monolith and explore how we engineer each solution.
+          Custom ERP, web apps, automations, motion and mobile, designed, engineered and shipped by
+          one team. Hover or tap a row to turn the die to its face; the arrow opens the details.
         </p>
       </div>
 
@@ -83,9 +90,20 @@ export default function CapabilitiesSection({ onSelectFace }) {
             <span className="cap-face-code">{cap.code}</span>
             <div className="cap-main-title">{cap.title}</div>
             <div className="cap-subtext">{cap.desc}</div>
-            <span className="cap-arrow-icon">↗</span>
+            <a
+              href={`/services/${cap.slug}`}
+              className="cap-arrow-icon"
+              data-cursor="DETAILS"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <span aria-hidden="true">↗</span>
+              <span className="sr-only">More about {cap.title}</span>
+            </a>
           </div>
         ))}
+        <a href="/services" className="btn-action-secondary cap-more-link" data-cursor="ALL">
+          <span>ALL SERVICES IN DETAIL</span>
+        </a>
       </div>
     </section>
   );

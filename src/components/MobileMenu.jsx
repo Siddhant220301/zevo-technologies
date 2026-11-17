@@ -1,21 +1,14 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import SectionLink from "@/components/SectionLink";
 import { setMotionMode, useMotionChoice } from "@/lib/motion";
-
-const LINKS = [
-  { href: "#about", label: "About Us" },
-  { href: "#mission", label: "Vision & Mission" },
-  { href: "#capabilities", label: "Capabilities" },
-  { href: "#erp", label: "Custom ERP" },
-  { href: "#motion", label: "Motion Lab" },
-  { href: "#cases", label: "Case Studies" },
-  { href: "#estimator", label: "Estimator" },
-];
+import { NAV_LINKS } from "@/lib/nav";
 
 // Full-screen navigation for tablet and phone widths. Holds every control the
-// desktop header has, so nothing is lost when it is hidden.
-export default function MobileMenu({ open, onClose, onRollDice }) {
+// desktop header has, so nothing is lost when it is hidden. `home` is false on
+// the inner pages, where the links lead back to the home page.
+export default function MobileMenu({ open, onClose, onRollDice, home = true }) {
   const panelRef = useRef(null);
   // "full" | "calm" once the page is running (null while rendering on the server)
   const motion = useMotionChoice();
@@ -47,11 +40,11 @@ export default function MobileMenu({ open, onClose, onRollDice }) {
       aria-hidden={!open}
     >
       <nav className="mobile-menu-nav" aria-label="Sections">
-        {LINKS.map((link, i) => (
-          <a key={link.href} href={link.href} style={{ "--i": i }} onClick={onClose}>
+        {NAV_LINKS.map((link, i) => (
+          <SectionLink key={link.id} home={home} id={link.id} style={{ "--i": i }} onClick={onClose}>
             <span className="idx">{String(i + 1).padStart(2, "0")}</span>
             <span>{link.label}</span>
-          </a>
+          </SectionLink>
         ))}
       </nav>
 
@@ -77,10 +70,10 @@ export default function MobileMenu({ open, onClose, onRollDice }) {
         >
           <span>ROLL DIE</span>
         </button>
-        <a href="#contact" className="btn-action-primary" onClick={onClose}>
+        <SectionLink home={home} id="contact" className="btn-action-primary" onClick={onClose}>
           <span>CONTACT //</span>
           <span>→</span>
-        </a>
+        </SectionLink>
       </div>
     </div>
   );

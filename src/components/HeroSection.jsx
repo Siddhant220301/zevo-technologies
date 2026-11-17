@@ -67,17 +67,16 @@ export default function HeroSection() {
       <div className="hero-lower-deck">
         <div className="hero-manifesto-card interactive-zone tilt-card">
           <p style={{ fontSize: "0.95rem", color: "var(--ink-secondary)", lineHeight: "1.65" }}>
-            Direct collaboration with our senior engineering team from day one. You keep 100% source
-            code, data, and database ownership with zero monthly per-seat software fees. Shipped in
-            focused, transparent 2-week milestones.
+            Tell us what is slowing your business down. Within 24 hours you get a scope breakdown
+            and a milestone estimate, straight from the engineers who will build it.
           </p>
           <div className="hero-cta-cluster">
             <a href="#capabilities" className="btn-action-primary" data-cursor="EXPLORE">
               <span>EXPLORE CAPABILITIES</span>
               <span>↘</span>
             </a>
-            <a href="#estimator" className="btn-action-secondary" data-cursor="ESTIMATE">
-              <span>CALCULATE ESTIMATE</span>
+            <a href="#contact" className="btn-action-secondary" data-cursor="START">
+              <span>START A PROJECT</span>
             </a>
           </div>
         </div>

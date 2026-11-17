@@ -1,6 +1,8 @@
+import { SITE } from "@/lib/site";
+
 export default function robots() {
   return {
     rules: { userAgent: "*", allow: "/" },
-    sitemap: "https://www.zevotechnologies.com/sitemap.xml",
+    sitemap: `${SITE.url}/sitemap.xml`,
   };
 }

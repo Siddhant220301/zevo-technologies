@@ -1,16 +1,29 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import ReelFilm from "@/components/ReelFilm";
+import { REEL } from "@/lib/reel";
 
 export default function MotionLabSection() {
   const canvasRef = useRef(null);
   const [reelMode, setReelMode] = useState("0");
   const timecodeRef = useRef(null);
   const rippleRadiusRef = useRef(0);
+  const activeButtonRef = useRef(null);
+  // A film whose file will not play gives its slot back to the drawn animation
+  const [failed, setFailed] = useState({});
+  // Films follow one another until the visitor picks one
+  const [autoAdvance, setAutoAdvance] = useState(true);
+
+  // The slot on show, and its film if it has one (see lib/reel.js)
+  const active = REEL.find((item) => item.id === reelMode) || REEL[0];
+  const film = active.video && !failed[active.id] ? active.video : null;
+  const films = REEL.filter((item) => item.video);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    // While a film has the viewer, the drawn animation rests
+    if (!canvas || film) return;
     const ctx = canvas.getContext("2d");
     let animId;
     let rTime = 0;
@@ -238,7 +251,7 @@ export default function MotionLabSection() {
       window.removeEventListener("resize", resize);
       canvas.removeEventListener("mousemove", onMouseMove);
     };
-  }, [reelMode]);
+  }, [reelMode, film]);
 
   const handleCanvasClick = () => {
     rippleRadiusRef.current = 10;
@@ -246,8 +259,22 @@ export default function MotionLabSection() {
 
   const handleReelClick = (mode) => {
     setReelMode(mode);
+    setAutoAdvance(false);
     rippleRadiusRef.current = 15;
   };
+
+  // When a film ends, the next slot that has a film takes over
+  const handleFilmEnded = useCallback(() => {
+    setReelMode((current) => {
+      const list = REEL.filter((item) => item.video);
+      const at = list.findIndex((item) => item.id === current);
+      return list.length ? list[(at + 1) % list.length].id : current;
+    });
+  }, []);
+
+  const handleFilmError = useCallback(() => {
+    setFailed((current) => ({ ...current, [reelMode]: true }));
+  }, [reelMode]);
 
   return (
     <section className="section-wrap content-grid" id="motion">
@@ -266,7 +293,11 @@ export default function MotionLabSection() {
 
       <div className="motion-right-col interactive-zone">
         <div className="shader-monitor-card tilt-card">
-          <div className="canvas-viewport-wrap">
+          <div
+            className={`canvas-viewport-wrap ${films.length ? "has-films" : ""} ${film ? "is-film" : ""} ${
+              film && film.mobile ? "has-tall-film" : ""
+            }`}
+          >
             <canvas
               id="reelSynthCanvas"
               ref={canvasRef}
@@ -274,6 +305,19 @@ export default function MotionLabSection() {
               height={380}
               onClick={handleCanvasClick}
             />
+            {film && (
+              <ReelFilm
+                key={active.id}
+                film={film}
+                poster={active.poster}
+                label={active.caption ? `${active.title}: ${active.caption}` : active.title}
+                loop={!autoAdvance || films.length < 2}
+                timecodeRef={timecodeRef}
+                progressTarget={activeButtonRef}
+                onEnded={handleFilmEnded}
+                onError={handleFilmError}
+              />
+            )}
             <div className="canvas-hud-header">
               <span>
                 <i className="recording-dot" />
@@ -284,37 +328,26 @@ export default function MotionLabSection() {
               </span>
             </div>
           </div>
-          <div className="reel-buttons-bar">
-            <button
-              type="button"
-              className={`reel-btn ${reelMode === "0" ? "active" : ""}`}
-              data-reel="0"
-              data-cursor="SWITCH"
-              onClick={() => handleReelClick("0")}
-            >
-              <span className="sub">STYLE 01 //</span>
-              <strong>Interactive Product Launch</strong>
-            </button>
-            <button
-              type="button"
-              className={`reel-btn ${reelMode === "1" ? "active" : ""}`}
-              data-reel="1"
-              data-cursor="SWITCH"
-              onClick={() => handleReelClick("1")}
-            >
-              <span className="sub">STYLE 02 //</span>
-              <strong>Kinetic Motion Graphics</strong>
-            </button>
-            <button
-              type="button"
-              className={`reel-btn ${reelMode === "2" ? "active" : ""}`}
-              data-reel="2"
-              data-cursor="SWITCH"
-              onClick={() => handleReelClick("2")}
-            >
-              <span className="sub">STYLE 03 //</span>
-              <strong>Cinematic Showcase</strong>
-            </button>
+          {active.caption && <p className="reel-caption">{active.caption}</p>}
+          <div className="reel-buttons-bar" style={{ "--reel-count": REEL.length }}>
+            {REEL.map((item) => {
+              const on = reelMode === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  ref={on ? activeButtonRef : null}
+                  className={`reel-btn ${on ? "active" : ""}`}
+                  data-reel={item.id}
+                  data-cursor="SWITCH"
+                  aria-pressed={on}
+                  onClick={() => handleReelClick(item.id)}
+                >
+                  <span className="sub">{item.kicker}</span>
+                  <strong>{item.title}</strong>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

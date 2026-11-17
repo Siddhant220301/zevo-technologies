@@ -2,9 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import MobileMenu from "@/components/MobileMenu";
+import SectionLink from "@/components/SectionLink";
 import ZevoLogo from "@/components/ZevoLogo";
+import { NAV_LINKS } from "@/lib/nav";
 
-export default function TopRail({ onRollDice }) {
+// The header. `home` is false on the inner pages, where its links lead back to
+// the sections of the home page.
+export default function TopRail({ onRollDice, home = true }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = useCallback(() => setMenuOpen(false), []);
   const railRef = useRef(null);
@@ -45,46 +49,18 @@ export default function TopRail({ onRollDice }) {
   return (
     <>
     <header className="top-rail" ref={railRef}>
-      <a href="#hero" className="brand-cluster" data-cursor="HOME">
+      <SectionLink home={home} className="brand-cluster" data-cursor="HOME">
         <ZevoLogo variant="compact" className="brand-logo" />
-      </a>
+      </SectionLink>
 
       <ul className="nav-menu">
-        <li>
-          <a href="#about" data-cursor="ABOUT">
-            About Us
-          </a>
-        </li>
-        <li>
-          <a href="#mission" data-cursor="MISSION">
-            Vision &amp; Mission
-          </a>
-        </li>
-        <li>
-          <a href="#capabilities" data-cursor="CAPS">
-            Capabilities
-          </a>
-        </li>
-        <li>
-          <a href="#erp" data-cursor="ERP">
-            Custom ERP
-          </a>
-        </li>
-        <li>
-          <a href="#motion" data-cursor="MOTION">
-            Motion Lab
-          </a>
-        </li>
-        <li>
-          <a href="#cases" data-cursor="CASES">
-            Case Studies
-          </a>
-        </li>
-        <li>
-          <a href="#estimator" data-cursor="ESTIMATOR">
-            Estimator
-          </a>
-        </li>
+        {NAV_LINKS.map((link) => (
+          <li key={link.id}>
+            <SectionLink home={home} id={link.id} data-cursor={link.cursor}>
+              {link.label}
+            </SectionLink>
+          </li>
+        ))}
       </ul>
 
       <div className="nav-cta-zone">
@@ -98,9 +74,9 @@ export default function TopRail({ onRollDice }) {
           🎲 <span>ROLL DIE</span>
         </button>
 
-        <a href="#contact" className="btn-header-cta" data-cursor="CONTACT">
+        <SectionLink home={home} id="contact" className="btn-header-cta" data-cursor="CONTACT">
           CONTACT //
-        </a>
+        </SectionLink>
 
         <button
           type="button"
@@ -115,7 +91,7 @@ export default function TopRail({ onRollDice }) {
         </button>
       </div>
     </header>
-    <MobileMenu open={menuOpen} onClose={closeMenu} onRollDice={handleRollClick} />
+    <MobileMenu open={menuOpen} onClose={closeMenu} onRollDice={handleRollClick} home={home} />
     </>
   );
 }
